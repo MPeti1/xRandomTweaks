@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">xRandomTweaks</string>
+
+    <string name="module_state_label">Module state</string>
+    <string name="module_state_enabled">Enabled</string>
+    <string name="module_state_disabled">Disabled</string>
+    <string name="xposed_version_label">Xposed version</string>
+    <string name="enable_module">Enable module</string>
+    <string name="tweak_item_icon_desc">App\'s icon on launcher</string>
+    <string name="tweak_card_label">Tweaks</string>
+    <string name="tweak_count">%1$d/%2$d enabled</string>
+</resources>
