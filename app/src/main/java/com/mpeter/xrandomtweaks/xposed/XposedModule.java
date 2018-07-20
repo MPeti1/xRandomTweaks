@@ -59,7 +59,7 @@ public class XposedModule {
     }
 
     private static void setupEnabledPackages(XSharedPreferences sharedPrefs){
-        if (mSharedPrefs != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
+        if (mEnabledPackages != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
         else if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
         else mEnabledPackages = sharedPrefs;
     }
