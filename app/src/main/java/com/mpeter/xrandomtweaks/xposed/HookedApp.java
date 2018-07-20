@@ -15,6 +15,10 @@ public abstract class HookedApp {
     public abstract void initHooks(XC_LoadPackage.LoadPackageParam loadPackageParam);
     public abstract void unHookAll();
 
+    protected boolean isEnabled(){
+        return isEnabled(true);
+    }
+
     protected boolean isEnabled(boolean def){
         if (XposedModule.getEnabledPackages().getBoolean(PACKAGE, def)){
             Timber.tag(LOG_TAG).d("%s hooks are enabled", PACKAGE);

@@ -1,8 +1,5 @@
 package com.mpeter.xrandomtweaks.xposed.MiuiHome;
 
-import android.content.res.XResources;
-
-import com.mpeter.xrandomtweaks.xposed.CurrentApp;
 import com.mpeter.xrandomtweaks.xposed.HookedApp;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.com.miui.home.launcher.DeviceConfig;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
@@ -12,15 +9,9 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.CLASS_CellLayout;
-import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.CL_SUBCLASS_LayoutParams;
 import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.METHOD_onMeasure;
-import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.METHOD_setup;
 
 public class MiuiHomeHooks extends HookedApp {
-    static boolean asd = true; //false
-    static boolean asd2 = true;
-    static int asd1 = 0;
-
     public MiuiHomeHooks() {
         super(MiuiHomeHooks.class, SupportedPackages.Package.PACKAGE_MIUI_HOME);
     }
@@ -29,12 +20,7 @@ public class MiuiHomeHooks extends HookedApp {
     public void initHooks(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         if (!isEnabled(true)) return;
 
-        /*XposedHelpers.findAndHookMethod(CLASS_DeviceConfig, loadPackageParam.classLoader, METHOD_getWidgetCellPaddingTop, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(0);
-            }
-        });*/
+        new MiuiHomeHeightGapFix().initHooks(loadPackageParam);
 
         XposedHelpers.findAndHookMethod(CLASS_CellLayout, loadPackageParam.classLoader, METHOD_onMeasure, int.class, int.class, new XC_MethodHook() {
             @Override
@@ -57,26 +43,6 @@ public class MiuiHomeHooks extends HookedApp {
 
                 //screentype x
                 int heightGap = Math.round(((float) (cellWorkingHeight - (cellHeight * mVCells))) / (((float) mVCells) - 1.0f));
-            }
-        });
-
-        XposedHelpers.findAndHookMethod(CL_SUBCLASS_LayoutParams, loadPackageParam.classLoader, METHOD_setup, int.class, int.class, int.class, int.class, int.class, int.class, int.class, int.class, int.class, int.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                int cellX = 0, cellY = 1, spanX = 2, spanY = 3, cellWidth = 4, cellHeight = 5, widthGap = 6, heightGap = 7, hStartPadding = 8, vStartPadding = 9,
-                        screenHeight = DeviceConfig.getScreenHeight(),
-                        availableHeight,
-                        hotSeatHeight,
-                        cellCountY = DeviceConfig.getCellCountY();
-
-                XResources r = CurrentApp.getResources();
-
-                hotSeatHeight = r.getDimensionPixelSize(r.getIdentifier("hotseats_height", "dimen", CurrentApp.getPackageName()));
-                availableHeight = screenHeight - (int) param.args[vStartPadding] - hotSeatHeight;
-
-                param.args[heightGap] = (availableHeight / cellCountY) - ((int) param.args[cellHeight]);
-
-//                param.args[7] = 0;
             }
         });
     }

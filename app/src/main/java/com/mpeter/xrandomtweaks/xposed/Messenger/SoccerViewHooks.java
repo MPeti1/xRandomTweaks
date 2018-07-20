@@ -20,10 +20,9 @@ import static com.mpeter.xrandomtweaks.xposed.Messenger.MessengerConstants.METHO
 
 public class SoccerViewHooks extends HookedFeature {
     public static final String LOG_TAG = XposedModule.getLogtag(SoccerViewHooks.class);
-
     private XSharedPreferences xSharedPrefs = XposedModule.getSharedPrefs();
 
-    public SoccerViewHooks() {
+    SoccerViewHooks() {
         super(SoccerViewHooks.class, SupportedPackages.Package.PACKAGE_FB_MESSENGER, App.FEATURE_TAG_MESSENGER_SOCCER_CHEAT);
     }
 

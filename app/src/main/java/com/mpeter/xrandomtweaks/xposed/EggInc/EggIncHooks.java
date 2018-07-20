@@ -6,17 +6,16 @@ import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class EggIncHooks extends HookedApp {
-    public static final String PACKAGE = SupportedPackages.Package.PACKAGE_EGGINC.getPackageName();
-
     public EggIncHooks() {
         super(EggIncHooks.class, SupportedPackages.Package.PACKAGE_EGGINC);
     }
 
     @Override
     public void initHooks(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        if (!isEnabled(true)) return;
+        if (!isEnabled()) return;
 
-        new EggIncActivityHooks().initHooks(loadPackageParam);
+        new EggIncPreventMusic().initHooks(loadPackageParam);
+        new EggIncSkipAds().initHooks(loadPackageParam);
     }
 
     @Override

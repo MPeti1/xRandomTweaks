@@ -12,6 +12,11 @@ public abstract class HookedFeature extends HookedApp {
     }
 
     @Override
+    protected boolean isEnabled() {
+        return isEnabled(true);
+    }
+
+    @Override
     protected boolean isEnabled(boolean def) {
         if (super.isEnabled(def) && XposedModule.getEnabledPackages().getBoolean(FEATURE_TAG, def)){
             Timber.tag(LOG_TAG).d("%s hooks are enabled", FEATURE_TAG);
