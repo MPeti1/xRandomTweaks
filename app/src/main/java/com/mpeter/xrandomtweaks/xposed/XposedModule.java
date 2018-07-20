@@ -1,40 +1,50 @@
 package com.mpeter.xrandomtweaks.xposed;
 
 import android.content.res.XModuleResources;
-import android.text.TextUtils;
-import android.util.Log;
+import android.os.Environment;
 
+import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
 
 import de.robv.android.xposed.XSharedPreferences;
+import timber.log.Timber;
 
 public class XposedModule {
     public static final String LOG_TAG = getLogtag(XposedModule.class);
     public static final String PACKAGE = BuildConfig.APPLICATION_ID;
-    private static String mModulePath;
+    private static final String MODULE_PATH = Environment.getDataDirectory().getPath() + "/data/" + PACKAGE;
     private static XModuleResources mResources;
     private static XSharedPreferences mSharedPrefs;
+    private static XSharedPreferences mEnabledPackages;
+
+    private static boolean initialized = false;
 
     public static String getLogtag(Class clazz) {
-        return PACKAGE.substring(PACKAGE.lastIndexOf("."), PACKAGE.length() - 1) +"/" + clazz.getSimpleName() + ": ";
+        return PACKAGE.substring(PACKAGE.lastIndexOf("."), PACKAGE.length()) +"/" + clazz.getSimpleName() + " ";
     }
 
-    public static void setModulePath(String modulePath) {
-        if (mModulePath != null) Log.w(LOG_TAG, "modulePath has been already set");
-        else if (modulePath != null && !TextUtils.isEmpty(modulePath)) {
-            mModulePath = modulePath;
-            setSharedPrefs(new XSharedPreferences(PACKAGE));
+    public static void init(){
+        if (initialized) {
+            Timber.tag(LOG_TAG).d("already initialized");
+            return;
         }
-        else Log.w(LOG_TAG, "modulePath is null or empty");
+        Timber.tag(LOG_TAG).d("initializing");
+
+        setSharedPrefs(new XSharedPreferences(PACKAGE));
+        setupEnabledPackages(new XSharedPreferences(PACKAGE, App.ENABLED_PACKAGES_PREF_FILE));
+
+        initialized = true;
+
+        Timber.tag(LOG_TAG).d("initialized. " + String.valueOf(mSharedPrefs == null) + String.valueOf(mEnabledPackages == null));
     }
 
     public static String getModulePath() {
-        return mModulePath;
+        return MODULE_PATH;
     }
 
     public static void setResoucres(XModuleResources resoucres) {
-        if (mResources != null) Log.w(LOG_TAG, "Resources has been already set");
-        else if (resoucres == null) Log.e(LOG_TAG, "Resources is null");
+        if (mResources != null) Timber.tag(LOG_TAG).w("Resources has been already set. stored res: %s$1, incoming res: %s$2", mResources.toString(), resoucres.toString());
+        else if (resoucres == null) Timber.tag(LOG_TAG).e("Resources is null");
         else mResources = resoucres;
     }
 
@@ -42,14 +52,24 @@ public class XposedModule {
         return mResources;
     }
 
-    public static void setSharedPrefs(XSharedPreferences sharedPrefs) {
-        if (mSharedPrefs != null) Log.w(LOG_TAG, "SharedPrefs has been already set");
-        else if (sharedPrefs == null) Log.e(LOG_TAG, "SharedPrefs is null");
-        else XposedModule.mSharedPrefs = sharedPrefs;
+    private static void setSharedPrefs(XSharedPreferences sharedPrefs) {
+        if (mSharedPrefs != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
+        else if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
+        else mSharedPrefs = sharedPrefs;
+    }
+
+    private static void setupEnabledPackages(XSharedPreferences sharedPrefs){
+        if (mSharedPrefs != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
+        else if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
+        else mEnabledPackages = sharedPrefs;
     }
 
     public static XSharedPreferences getSharedPrefs() {
         return mSharedPrefs;
+    }
+
+    public static XSharedPreferences getEnabledPackages(){
+        return mEnabledPackages;
     }
 
     public static boolean isModuleEnabled(){

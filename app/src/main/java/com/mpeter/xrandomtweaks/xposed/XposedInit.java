@@ -2,6 +2,7 @@ package com.mpeter.xrandomtweaks.xposed;
 
 import android.content.res.XModuleResources;
 
+import com.mpeter.xrandomtweaks.foresttools.Forester;
 import com.mpeter.xrandomtweaks.xposed.AIMP.AIMPHooks;
 import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncHooks;
 import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
@@ -20,7 +21,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
-        XposedModule.setModulePath(startupParam.modulePath);
     }
 
     @Override
@@ -29,6 +29,9 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
         if (pkg == null) return;
 
+        Forester.forestate();
+
+        XposedModule.init();
         CurrentApp.init(lpparam);
         switch (pkg) {
             case PACKAGE_SELF:
@@ -60,7 +63,8 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
         if (pkg == null) return;
 
-        XposedModule.setResoucres(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
+        if (XposedModule.getResources() == null)
+            XposedModule.setResoucres(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
 
         switch (pkg) {
             case PACKAGE_SELF:

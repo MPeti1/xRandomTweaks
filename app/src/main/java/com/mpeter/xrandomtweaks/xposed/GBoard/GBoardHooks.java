@@ -5,6 +5,7 @@ import android.graphics.RectF;
 import android.util.TypedValue;
 
 import com.mpeter.xrandomtweaks.xposed.HookedApp;
+import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -12,14 +13,20 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class GBoardHooks extends GBoardConstants implements HookedApp {
+public class GBoardHooks extends HookedApp {
     public static final String LOG_TAG = XposedModule.getLogtag(GBoardHooks.class);
     public static final float ROUND_CORNER_DIP = 3f; //nagyjából ennyi (3f) volt a mértéke a régi verziókban
     private static float ROUND_CORNER = 0f; //automatikus, a fentit állítsd, ne ezt.
 
+    public GBoardHooks() {
+        super(GBoardHooks.class, SupportedPackages.Package.PACKAGE_GBOARD);
+    }
+
     @Override
     public void initHooks(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        XposedHelpers.findAndHookMethod(CLASS_Canvas, loadPackageParam.classLoader, METHOD_drawRoundRect, float.class, float.class, float.class, float.class, float.class, float.class, Paint.class, new XC_MethodHook() {
+        if (!isEnabled(true)) return;
+
+        XposedHelpers.findAndHookMethod("android.graphics.Canvas", loadPackageParam.classLoader, "drawRoundRect", float.class, float.class, float.class, float.class, float.class, float.class, Paint.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 initRoundCorner();
@@ -29,7 +36,7 @@ public class GBoardHooks extends GBoardConstants implements HookedApp {
             }
         });
 
-        XposedHelpers.findAndHookMethod(CLASS_Canvas, loadPackageParam.classLoader, METHOD_drawRoundRect, RectF.class, float.class, float.class, Paint.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("android.graphics.Canvas", loadPackageParam.classLoader, "drawRoundRect", RectF.class, float.class, float.class, Paint.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 initRoundCorner();

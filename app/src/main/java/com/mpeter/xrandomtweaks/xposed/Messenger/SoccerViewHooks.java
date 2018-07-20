@@ -3,8 +3,10 @@ package com.mpeter.xrandomtweaks.xposed.Messenger;
 import android.app.AndroidAppHelper;
 import android.content.Context;
 
+import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.utils.ToastUtils;
-import com.mpeter.xrandomtweaks.xposed.HookedApp;
+import com.mpeter.xrandomtweaks.xposed.HookedFeature;
+import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -13,13 +15,22 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class SoccerViewHooks extends MessengerConstants implements HookedApp {
+import static com.mpeter.xrandomtweaks.xposed.Messenger.MessengerConstants.CLASS_SoccerView;
+import static com.mpeter.xrandomtweaks.xposed.Messenger.MessengerConstants.METHOD_setDisplayScore;
+
+public class SoccerViewHooks extends HookedFeature {
     public static final String LOG_TAG = XposedModule.getLogtag(SoccerViewHooks.class);
 
     private XSharedPreferences xSharedPrefs = XposedModule.getSharedPrefs();
 
+    public SoccerViewHooks() {
+        super(SoccerViewHooks.class, SupportedPackages.Package.PACKAGE_FB_MESSENGER, App.FEATURE_TAG_MESSENGER_SOCCER_CHEAT);
+    }
+
     @Override
     public void initHooks(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        if (!isEnabled(true)) return;
+
         XposedHelpers.findAndHookMethod(CLASS_SoccerView, loadPackageParam.classLoader, METHOD_setDisplayScore, CLASS_SoccerView, int.class, new XC_MethodHook() {
             Context applicationContext;
 

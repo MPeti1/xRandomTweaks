@@ -5,20 +5,30 @@ import android.content.res.XResources;
 import com.mpeter.xrandomtweaks.xposed.CurrentApp;
 import com.mpeter.xrandomtweaks.xposed.HookedApp;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.com.miui.home.launcher.DeviceConfig;
+import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class MiuiHomeHooks extends MiuiHomeConstants implements HookedApp {
-    public static final String COMPONENT_NAME = MiuiHomeHooks.class.getSimpleName() + ": ";
+import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.CLASS_CellLayout;
+import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.CL_SUBCLASS_LayoutParams;
+import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.METHOD_onMeasure;
+import static com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeConstants.METHOD_setup;
 
+public class MiuiHomeHooks extends HookedApp {
     static boolean asd = true; //false
     static boolean asd2 = true;
     static int asd1 = 0;
 
+    public MiuiHomeHooks() {
+        super(MiuiHomeHooks.class, SupportedPackages.Package.PACKAGE_MIUI_HOME);
+    }
+
     @Override
     public void initHooks(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        if (!isEnabled(true)) return;
+
         /*XposedHelpers.findAndHookMethod(CLASS_DeviceConfig, loadPackageParam.classLoader, METHOD_getWidgetCellPaddingTop, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {

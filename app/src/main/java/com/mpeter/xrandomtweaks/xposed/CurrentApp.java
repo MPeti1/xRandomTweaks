@@ -56,7 +56,7 @@ public class CurrentApp {
         sAppContext = AndroidAppHelper.currentApplication().getApplicationContext();
 
         if (sAppContext != null) return sAppContext;
-        throw new NullPointerException("appContext is null. You should init it in handleLoadPackage");
+        throw new NullPointerException("AppContext is null. You should init it in handleLoadPackage");
     }
 
     /*private static void initContextGetterHook() {
