@@ -9,4 +9,25 @@
     <string name="tweak_item_icon_desc">App\'s icon on launcher</string>
     <string name="tweak_card_label">Tweaks</string>
     <string name="tweak_count">%1$d/%2$d enabled</string>
+
+    <string name="preload_disabled_hooks_key">preload_disabled_hooks</string>
+
+    <string name="aimp_hooks_enabled">aimp_hooks_enabled_key</string>
+    <string name="aimp_replace_albumart">aimp_replace_albumart_key</string>
+    <string name="aimp_restart_on_longpress">aimp_restart_on_longpress_key</string>
+
+    <string name="egginc_hooks_enabled">egginc_hooks_enabled_key</string>
+    <string name="egginc_prevent_music">egginc_prevent_music_key</string>
+    <string name="egginc_skip_ads">egginc_skip_ads_key</string>
+
+    <string name="gboard_hooks_enabled">gboard_hooks_enabled_key</string>
+    <string name="gboard_use_custom_round_corner">gboard_use_custom_round_corner_key</string>
+    <string name="gboard_custom_round_corner_dip">gboard_custom_round_corner_dip_key</string>
+
+    <string name="messenger_hooks_enabled">messenger_hooks_enabled_key</string>
+    <string name="messenger_cheat_soccer">messenger_cheat_soccer_key</string>
+    <string name="messenger_soccer_score">messenger_soccer_score_key</string>
+
+    <string name="miuihome_hooks_enabled">miuihome_hooks_enabled_key</string>
+    <string name="miuihome_fix_heightgap">miuihome_fix_heightgap_key</string>
 </resources>

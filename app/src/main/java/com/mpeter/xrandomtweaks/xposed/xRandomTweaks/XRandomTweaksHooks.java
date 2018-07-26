@@ -22,9 +22,4 @@ public class XRandomTweaksHooks extends HookedApp {
             }
         });
     }
-
-    @Override
-    public void unHookAll() {
-
-    }
 }

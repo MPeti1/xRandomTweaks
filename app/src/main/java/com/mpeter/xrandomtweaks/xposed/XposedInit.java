@@ -15,12 +15,14 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import timber.log.Timber;
 
 public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackageResources, IXposedHookZygoteInit {
     public static final String LOG_TAG = XposedModule.getLogtag(XposedInit.class);
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
+        XposedModule.setModulePath(startupParam.modulePath);
     }
 
     @Override
@@ -31,7 +33,7 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
         Forester.forestate();
 
-        XposedModule.init();
+        XposedModule.init(lpparam);
         CurrentApp.init(lpparam);
         switch (pkg) {
             case PACKAGE_SELF:
@@ -57,14 +59,20 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
         }
     }
 
+    static int packageResourcesInitedInProcess = 0;
+
     @Override
     public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resparam) throws Throwable {
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(resparam.packageName);
 
         if (pkg == null) return;
+        if (pkg == SupportedPackages.Package.PACKAGE_MIUI_HOME)
+            Timber.tag(LOG_TAG).d(resparam.packageName + " got resources of " + resparam.res.getPackageName());
 
-        if (XposedModule.getResources() == null)
-            XposedModule.setResoucres(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
+        packageResourcesInitedInProcess++;
+
+        if (XposedModule.needsResources())
+            XposedModule.setResources(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
 
         switch (pkg) {
             case PACKAGE_SELF:
