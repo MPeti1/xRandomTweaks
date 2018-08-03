@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preload_disabled_hooks_key">preload_disabled_hooks</string>
+    <bool name="preload_disabled_hooks_def">false</bool>
+
+    <string name="aimp_hooks_enabled">aimp_hooks_enabled</string>
+    <bool name="aimp_hooks_enabled_def">false</bool>
+    <string name="aimp_replace_albumart">aimp_replace_albumart</string>
+    <bool name="aimp_replace_albumart_def">true</bool>
+    <string name="aimp_restart_on_longpress">aimp_restart_on_longpress</string>
+    <bool name="aimp_restart_on_longpress_def">true</bool>
+
+    <string name="egginc_hooks_enabled">egginc_hooks_enabled</string>
+    <bool name="egginc_hooks_enabled_def">false</bool>
+    <string name="egginc_prevent_music">egginc_prevent_music</string>
+    <bool name="egginc_prevent_music_def">true</bool>
+    <string name="egginc_skip_ads">egginc_skip_ads</string>
+    <bool name="egginc_skip_ads_def">false</bool>
+
+    <string name="gboard_hooks_enabled">gboard_hooks_enabled</string>
+    <bool name="gboard_hooks_enabled_def">false</bool>
+    <string name="gboard_use_custom_round_corner">gboard_use_custom_round_corner</string>
+    <bool name="gboard_use_custom_round_corner_def">true</bool>
+    <string name="gboard_custom_round_corner_dip">gboard_custom_round_corner_dip</string>
+    <integer name="gboard_custom_round_corner_dip_def">3</integer>
+
+    <string name="messenger_hooks_enabled">messenger_hooks_enabled</string>
+    <bool name="messenger_hooks_enabled_def">false</bool>
+    <string name="messenger_cheat_soccer">messenger_cheat_soccer</string>
+    <bool name="messenger_cheat_soccer_def">false</bool>
+    <string name="messenger_soccer_score">messenger_soccer_score</string>
+    <integer name="messenger_soccer_score_def">0</integer>
+
+    <string name="miuihome_hooks_enabled">miuihome_hooks_enabled</string>
+    <bool name="miuihome_hooks_enabled_def">false</bool>
+    <string name="miuihome_fix_heightgap">miuihome_fix_heightgap</string>
+    <bool name="miuihome_fix_heightgap_def">true</bool>
+</resources>

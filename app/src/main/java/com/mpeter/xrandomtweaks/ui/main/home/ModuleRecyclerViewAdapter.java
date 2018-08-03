@@ -27,8 +27,8 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
     private Context mContext;
     private SharedPreferences mEnabledPackages;
 
-    interface OnRecyclerViewItemClickListener<T> {
-        T onListItemClicked(String packageName);
+    interface OnRecyclerViewItemClickListener {
+        void onListItemClicked(String packageName);
     }
 
     ModuleRecyclerViewAdapter(ArrayList<ApplicationInfo> apps, OnRecyclerViewItemClickListener listener, Context context) {

@@ -7,6 +7,7 @@ import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import timber.log.Timber;
 
 import static com.mpeter.xrandomtweaks.xposed.EggInc.EggIncConstants.CLASS_EggIncActivity;
 import static com.mpeter.xrandomtweaks.xposed.EggInc.EggIncConstants.METHOD_playAdColonyVideoAd;
@@ -27,7 +28,7 @@ public class EggIncHooks extends HookedApp {
 
     @Override
     public void initHooks(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        if (!hooksEnabled) return;
+        if (!hooksEnabled && !ModuleSettings.preloadDisabledHooks()) return;
 
         if (preventMusic || ModuleSettings.preloadDisabledHooks())
             hookPreventMusic(loadPackageParam);
@@ -40,7 +41,8 @@ public class EggIncHooks extends HookedApp {
         XposedHelpers.findAndHookMethod(CLASS_EggIncActivity, loadPackageParam.classLoader, METHOD_playMusic, String.class, boolean.class, float.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(null);
+                if (hooksEnabled && preventMusic)
+                    param.setResult(null);
             }
         });
     }
@@ -49,38 +51,47 @@ public class EggIncHooks extends HookedApp {
         XposedHelpers.findAndHookMethod(CLASS_EggIncActivity, loadPackageParam.classLoader, METHOD_playVungleVideoAd, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(true);
-                videoAdViewComplete(param);
+                if (hooksEnabled && skipAds){
+                    param.setResult(true);
+                    videoAdViewComplete(param);
+                }
             }
         });
 
         XposedHelpers.findAndHookMethod(CLASS_EggIncActivity, loadPackageParam.classLoader, METHOD_playAdColonyVideoAd, int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(true);
-                videoAdViewComplete(param);
+                if (hooksEnabled && skipAds){
+                    param.setResult(true);
+                    videoAdViewComplete(param);
+                }
             }
         });
 
         XposedHelpers.findAndHookMethod(CLASS_EggIncActivity, loadPackageParam.classLoader, METHOD_playChartboostVideoAd, int.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(true);
-                videoAdViewComplete(param);
+                if (hooksEnabled && skipAds){
+                    param.setResult(true);
+                    videoAdViewComplete(param);
+                }
             }
         });
 
         XposedHelpers.findAndHookMethod(CLASS_EggIncActivity, loadPackageParam.classLoader, METHOD_playUnityVideoAd, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(true);
-                videoAdViewComplete(param);
+                if (hooksEnabled && skipAds){
+                    param.setResult(true);
+                    videoAdViewComplete(param);
+                }
             }
         });
     }
 
     private void videoAdViewComplete(XC_MethodHook.MethodHookParam param){
         XposedHelpers.callMethod(param.thisObject, METHOD_videoAdViewComplete, true);
+        Timber.tag(LOG_TAG).i("Skipped an ad");
     }
 
     public static void setHooksEnabled(boolean hooksEnabled) {

@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
+import com.mpeter.xrandomtweaks.ui.HookPreferenceFragment;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
@@ -39,7 +40,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     //Tweaks CardView
     RecyclerView recyclerView;
     TextView tweakCount;
-    ArrayList<String> appa = new ArrayList<>();
+    ArrayList<String> apps = new ArrayList<>();
 
     SharedPreferences enabledTweaks;
 
@@ -113,8 +114,13 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     }
 
     @Override
-    public Object onListItemClicked(String packageName) {
-        return null; //TODO
+    public void onListItemClicked(String packageName) {
+        Bundle bundle = new Bundle();
+        bundle.putString(HookPreferenceFragment.EXTRA_PACKAGE_NAME, packageName);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment, HookPreferenceFragment.instantiate(getActivity(), HookPreferenceFragment.class.getCanonicalName(), bundle))
+                .commit();
     }
 
     public interface OnFragmentInteractionListener {
