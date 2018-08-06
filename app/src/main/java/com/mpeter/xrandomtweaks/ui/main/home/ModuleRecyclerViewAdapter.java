@@ -3,6 +3,7 @@ package com.mpeter.xrandomtweaks.ui.main.home;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,16 +17,21 @@ import android.widget.TextView;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.utils.picasso.PackageIconRequestHandler;
+import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
+import com.mpeter.xrandomtweaks.xposed.XposedModule;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import timber.log.Timber;
+
 public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecyclerViewAdapter.ViewHolder> {
+    public static final String LOG_TAG = XposedModule.getLogtag(ModuleRecyclerViewAdapter.class);
     private OnRecyclerViewItemClickListener mListener;
     private ArrayList<ApplicationInfo> mApps;
     private Picasso mPicasso;
     private Context mContext;
-    private SharedPreferences mEnabledPackages;
+    private SharedPreferences mXSettings;
 
     interface OnRecyclerViewItemClickListener {
         void onListItemClicked(String packageName);
@@ -37,7 +43,7 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         this.mApps = apps;
         this.mListener = listener;
 
-        mEnabledPackages = context.getSharedPreferences(App.ENABLED_PACKAGES_PREF_FILE, Context.MODE_PRIVATE);
+        mXSettings = context.getSharedPreferences(App.ENABLED_PACKAGES_PREF_FILE, Context.MODE_PRIVATE);
         mContext = context;
 
         Picasso.Builder builder = new Picasso.Builder(context);
@@ -64,7 +70,35 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
 
         mPicasso.load(PackageIconRequestHandler.getUri(applicationInfo.packageName)).into(holder.icon);
 
-        boolean enabled = mEnabledPackages.getBoolean(applicationInfo.packageName, false);
+        Resources r = mContext.getResources();
+
+        String prefString = null;
+        SupportedPackages.Package pkg = SupportedPackages.Package.forString(applicationInfo.packageName);
+
+        assert pkg != null;
+        switch (pkg) {
+            case PACKAGE_MIUI_HOME:
+                prefString = r.getString(R.string.miuihome_hooks_enabled);
+                break;
+            case PACKAGE_FB_MESSENGER:
+                prefString = r.getString(R.string.messenger_hooks_enabled);
+                break;
+            case PACKAGE_EGGINC:
+                prefString = r.getString(R.string.egginc_hooks_enabled);
+                break;
+            case PACKAGE_AIMP:
+                prefString = r.getString(R.string.aimp_hooks_enabled);
+                break;
+            case PACKAGE_GBOARD:
+                prefString = r.getString(R.string.gboard_hooks_enabled);
+                break;
+
+            default:
+                Timber.tag(LOG_TAG).e("Invalid Package: getPackageName: %s, toString: %s, name: %s", pkg.getPackageName(), pkg.toString(), pkg.name());
+        }
+
+
+        boolean enabled = mXSettings.getBoolean(prefString, false);
         holder.toggle.setChecked(enabled);
     }
 
@@ -98,9 +132,38 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             View itemView = (View) buttonView.getParent().getParent();
-            String tag = (String) itemView.getTag();
+            /*String tag = (String) itemView.getTag();
 
-            mEnabledPackages.edit().putBoolean(tag, isChecked).apply();
+            mEnabledPackages.edit().putBoolean(tag, isChecked).apply();*/
+
+            SupportedPackages.Package pkg = SupportedPackages.Package.forString((String) itemView.getTag());
+
+            SharedPreferences.Editor editor = mXSettings.edit();
+            Resources r = mContext.getResources();
+
+            assert pkg != null;
+            switch (pkg){
+                case PACKAGE_MIUI_HOME:
+                    editor.putBoolean(r.getString(R.string.miuihome_hooks_enabled), isChecked);
+                    break;
+                case PACKAGE_FB_MESSENGER:
+                    editor.putBoolean(r.getString(R.string.messenger_hooks_enabled), isChecked);
+                    break;
+                case PACKAGE_EGGINC:
+                    editor.putBoolean(r.getString(R.string.egginc_hooks_enabled), isChecked);
+                    break;
+                case PACKAGE_AIMP:
+                    editor.putBoolean(r.getString(R.string.aimp_hooks_enabled), isChecked);
+                    break;
+                case PACKAGE_GBOARD:
+                    editor.putBoolean(r.getString(R.string.gboard_hooks_enabled), isChecked);
+                    break;
+                default:
+                    Timber.tag(LOG_TAG).e("Invalid Package: getPackageName: %s, toString: %s, name: %s", pkg.getPackageName(), pkg.toString(), pkg.name());
+                    break;
+            }
+
+            editor.apply();
         }
     }
 }

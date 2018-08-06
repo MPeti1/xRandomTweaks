@@ -35,6 +35,7 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
         XposedModule.init(lpparam);
         CurrentApp.init(lpparam);
+
         switch (pkg) {
             case PACKAGE_SELF:
                 new XRandomTweaksHooks().initHooks(lpparam);
@@ -59,8 +60,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
         }
     }
 
-    static int packageResourcesInitedInProcess = 0;
-
     @Override
     public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam resparam) throws Throwable {
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(resparam.packageName);
@@ -68,8 +67,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
         if (pkg == null) return;
         if (pkg == SupportedPackages.Package.PACKAGE_MIUI_HOME)
             Timber.tag(LOG_TAG).d(resparam.packageName + " got resources of " + resparam.res.getPackageName());
-
-        packageResourcesInitedInProcess++;
 
         if (XposedModule.needsResources())
             XposedModule.setResources(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
@@ -82,7 +79,7 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_AIMP:
             case PACKAGE_GBOARD:
 //                if (CurrentApp.getPackageName().equals(resparam.packageName))
-                    CurrentApp.initResources(resparam);
+                CurrentApp.initResources(resparam);
                 break;
             default:
                 break;

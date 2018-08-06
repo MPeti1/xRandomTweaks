@@ -18,6 +18,11 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name=".xposed.ModuleSettingsProvider"
+            android:authorities="com.mpeter.xrandomtweaks.settings"
+            android:exported="true" />
+
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
@@ -28,7 +33,7 @@
 
         <meta-data
             android:name="xposedminversion"
-            android:value="81"/>
+            android:value="81" />
 
     </application>
 

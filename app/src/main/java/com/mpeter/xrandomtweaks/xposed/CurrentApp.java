@@ -34,7 +34,6 @@ public class CurrentApp {
         setAppInfo(loadPackageParam.appInfo);
         setSharedPrefs(new XSharedPreferences(loadPackageParam.packageName));
 
-        XposedModule.handleBindApplication(loadPackageParam);
 //        initContextGetterHook();
 
         initialized = true;
@@ -70,7 +69,7 @@ public class CurrentApp {
     }*/
 
     //bugos ha többször hivatkozol egy adatra, mert azt nézi hogy hányszor hivatkoztál
-    //és mennyi adatot adsz neki, és nem azt hogy létezik e anyi adat ahanyadikra hivatkozol
+    //és mennyi adatot adsz neki, és nem azt hogy létezik-e annyi adat ahanyadikra hivatkozol
     @SuppressLint("TimberArgCount")
     public static void initResources(XC_InitPackageResources.InitPackageResourcesParam resparam) {
         if (mResources != null) Timber.tag(LOG_TAG).w("Resources has been already set. stored res: %1$s, incoming res: %2$s, in package %3$s\nmaybe %1$s loads external resources?", mResources.getPackageName(), resparam.packageName, getPackageName());

@@ -1,15 +1,13 @@
 package com.mpeter.xrandomtweaks.xposed;
 
-import android.app.AndroidAppHelper;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.XModuleResources;
-import android.os.Debug;
 
+import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
-import com.mpeter.xrandomtweaks.dummy.android.app.ActivityThread;
-import com.mpeter.xrandomtweaks.dummy.android.app.IApplicationThread;
 
-import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -21,17 +19,18 @@ public class XposedModule {
     private static String mModulePath = null;
     private static XModuleResources mResources;
     private static XSharedPreferences mSharedPrefs;
-    private static XSharedPreferences mEnabledPackages;
+    private static SharedPreferences mXSettings;
+    private static Context systemContext;
 
     private static boolean initialized = false;
     private static boolean isTempRes = true;
     private static final boolean earlyDebug = true;
 
     public static String getLogtag(Class clazz) {
-        return PACKAGE.substring(PACKAGE.lastIndexOf("."), PACKAGE.length()) +"/" + clazz.getSimpleName() + " ";
+        return PACKAGE.substring(PACKAGE.lastIndexOf("."), PACKAGE.length()) + "/" + clazz.getSimpleName() + " ";
     }
 
-    public static void init(XC_LoadPackage.LoadPackageParam loadPackageParam){
+    public static void init(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         if (initialized) {
             Timber.tag(LOG_TAG).d("already initialized in %s", loadPackageParam.packageName);
             return;
@@ -39,14 +38,13 @@ public class XposedModule {
         Timber.tag(LOG_TAG).d("initializing in %s", loadPackageParam.packageName);
 
         setSharedPrefs(new XSharedPreferences(PACKAGE));
-        setupEnabledPackages(new XSharedPreferences(PACKAGE, App.ENABLED_PACKAGES_PREF_FILE));
         setResources(XModuleResources.createInstance(mModulePath, null));
-        new ModuleSettings();
+        setupXSettings(loadPackageParam);
 
         initialized = true;
     }
 
-    public static void setModulePath(String modulePath){
+    public static void setModulePath(String modulePath) {
         mModulePath = modulePath;
     }
 
@@ -55,14 +53,14 @@ public class XposedModule {
     }
 
     public static void setResources(XModuleResources resources) {
-        if (resources == null){
+        if (resources == null) {
             Timber.tag(LOG_TAG).w("incoming resources is null in %s", CurrentApp.getPackageName());
             return;
         } else if (!isTempRes) {
             Timber.tag(LOG_TAG).w("Resources has been already set. stored res: " + mResources.toString() + ", incoming res: " + resources.toString() + ", packageName: " + CurrentApp.getPackageName());
             return;
         } else if (resources.getDisplayMetrics().widthPixels == 0) {
-            Timber.tag(LOG_TAG).w("Resources are now temporary");
+            Timber.tag(LOG_TAG).d("Resources are now temporary");
             isTempRes = true;
         } else {
             Timber.tag(LOG_TAG).d("Resources now contains metrics and config");
@@ -72,7 +70,7 @@ public class XposedModule {
         mResources = resources;
     }
 
-    public static boolean needsResources(){
+    public static boolean needsResources() {
         return isTempRes;
     }
 
@@ -86,49 +84,55 @@ public class XposedModule {
         else mSharedPrefs = sharedPrefs;
     }
 
-    private static void setupEnabledPackages(XSharedPreferences sharedPrefs){
-        if (mEnabledPackages != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
+    private static void setupXSettings(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        /*if (mEnabledPackages != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
         else if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
-        else mEnabledPackages = sharedPrefs;
+        else mEnabledPackages = sharedPrefs;*/
+
+       /* XposedHelpers.findAndHookMethod("android.app.ActivityThread", loadPackageParam.classLoader, "handleBindApplication", "android.app.ActivityThread.AppBindData", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                *//*Application application = (Application) XposedHelpers.callMethod(
+                        XposedHelpers.getObjectField(param.args[0], "info"),
+                        "makeApplication",
+                        false,
+                        null
+                );
+
+                XposedHelpers.callMethod(
+                        param.thisObject,
+                        "installContentProviders",
+                        application,
+                        XposedHelpers.getObjectField(param.args[0], "providers");
+                );*//*
+
+                new ModuleSettings();
+            }
+        });*/
+
+        systemContext = (Context) XposedHelpers.callMethod(
+                XposedHelpers.callStaticMethod(
+                        XposedHelpers.findClass("android.app.ActivityThread", loadPackageParam.classLoader),
+                        "currentActivityThread"),
+                "getSystemContext"
+        );
+
+        mXSettings = new RemotePreferences(systemContext, ModuleSettingsProvider.AUTHORITY, App.ENABLED_PACKAGES_PREF_FILE);
+
+        new ModuleSettings();
     }
 
     public static XSharedPreferences getSharedPrefs() {
         return mSharedPrefs;
     }
 
-    public static XSharedPreferences getEnabledPackages(){
-        return mEnabledPackages;
+    public static SharedPreferences getXSettings() {
+        return mXSettings;
     }
 
-    public static void handleBindApplication(XC_LoadPackage.LoadPackageParam loadPackageParam){
-        XposedHelpers.findAndHookMethod("android.app.ActivityThread", loadPackageParam.classLoader, "handleBindApplication", "android.app.ActivityThread.AppBindData", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (!earlyDebug || !param.method.getClass().getPackage().getName().startsWith(SupportedPackages.Package.PACKAGE_MIUI_HOME.getPackageName()))
-                    return;
-
-                Timber.tag(LOG_TAG).d("preparing early debug");
-
-                ActivityThread.AppBindData.xsetDebugMode(IApplicationThread.DEBUG_WAIT);
-
-                Debug.changeDebugPort(8100);
-
-                Timber.tag(LOG_TAG).d("early debug prepared");
-
-                Debug.waitForDebugger();
-
-                Timber.tag(LOG_TAG).d("early debug finished");
-            }
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                CurrentApp.getApplicationContext().setValue(AndroidAppHelper.currentApplication().getApplicationContext());
-                Timber.tag(LOG_TAG).d("AppContext is from %s", CurrentApp.getApplicationContext().getValue().getPackageName());
-            }
-        });
-    }
-
-    public static boolean isModuleEnabled(){
+    public static boolean isModuleEnabled() {
         return false;
     }
 }
