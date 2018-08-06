@@ -46,41 +46,41 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 break;
             case PACKAGE_MIUI_HOME:
                 SwitchPreferenceCompat layoutHeightFix = new SwitchPreferenceCompat(contextThemeWrapper);
-                layoutHeightFix.setTitle("Fix layout height");
-                layoutHeightFix.setSummary("Otherwise if you set the dpi under 270, the 5. row would overflow behind the favourites bar");
+                layoutHeightFix.setTitle(getString(R.string.xsettings_com_miui_home_fix_layout_height_title));
+                layoutHeightFix.setSummary(getString(R.string.xsettings_com_miui_home_fix_layout_height_sumary));
                 layoutHeightFix.setKey(getString(R.string.miuihome_fix_heightgap));
                 layoutHeightFix.setDefaultValue(r.getBoolean(R.bool.miuihome_fix_heightgap_def));
                 preferenceCategory.addPreference(layoutHeightFix);
-                preferenceCategory.setTitle("MIUI Home settings");
+                preferenceCategory.setTitle(getString(R.string.xsettings_com_miui_home_title));
                 break;
             case PACKAGE_FB_MESSENGER:
                 SwitchPreferenceCompat cheatSoccer = new SwitchPreferenceCompat(contextThemeWrapper);
-                cheatSoccer.setTitle("Cheat soccer score");
+                cheatSoccer.setTitle(getString(R.string.xsettings_com_facebook_orca_cheat_soccer_score_title));
                 cheatSoccer.setKey(getString(R.string.messenger_cheat_soccer));
                 cheatSoccer.setDefaultValue(r.getBoolean(R.bool.messenger_cheat_soccer_def));
 
                 EditTextPreference cheatedScore = new EditTextPreference(contextThemeWrapper); //TODO: csak számok
-                cheatedScore.setTitle("Custom score");
+                cheatedScore.setTitle(getString(R.string.xsettings_com_facebook_orca_custom_score_title));
                 cheatedScore.setKey(getString(R.string.messenger_soccer_score));
-                cheatedScore.setDefaultValue(r.getInteger(R.integer.messenger_soccer_score_def));
+                cheatedScore.setDefaultValue(String.valueOf(r.getInteger(R.integer.messenger_soccer_score_def)));
 
                 preferenceCategory.addPreference(cheatSoccer);
                 preferenceCategory.addPreference(cheatedScore);
-                preferenceCategory.setTitle("Messenger settings");
+                preferenceCategory.setTitle(getString(R.string.xsettings_com_facebook_orca_title));
                 break;
             case PACKAGE_EGGINC:
                 SwitchPreferenceCompat preventMusic = new SwitchPreferenceCompat(contextThemeWrapper);
-                preventMusic.setTitle("Prevent music from starting");
-                preventMusic.setSummary("Otherwise music will start for a moment at startup even if you turned it off");
+                preventMusic.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_prevent_music_title));
+                preventMusic.setSummary(getString(R.string.xsettings_com_auxbrain_egginc_prevent_music_summary));
                 preventMusic.setKey(getString(R.string.egginc_prevent_music));
                 preventMusic.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_music_def));
 
                 preferenceCategory.addPreference(preventMusic);
-                preferenceCategory.setTitle("EggInc setings");
+                preferenceCategory.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_title));
 
                 if (BuildConfig.DEBUG){
                     SwitchPreferenceCompat skipAds = new SwitchPreferenceCompat(contextThemeWrapper);
-                    skipAds.setTitle("Skip ads immediately");
+                    skipAds.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_skip_ads_title));
                     skipAds.setKey(getString(R.string.egginc_skip_ads));
                     skipAds.setDefaultValue(r.getBoolean(R.bool.egginc_skip_ads_def));
 
@@ -89,35 +89,35 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 break;
             case PACKAGE_AIMP:
                 SwitchPreferenceCompat replaceAlbumart = new SwitchPreferenceCompat(contextThemeWrapper);
-                replaceAlbumart.setTitle("Replace album art on lock screen to the good old AIMP logo");
+                replaceAlbumart.setTitle(getString(R.string.xsettings_com_aimp_player_replace_albumart_title));
                 replaceAlbumart.setKey(getString(R.string.aimp_replace_albumart));
-                replaceAlbumart.setSummary("I liked it, and maybe I'm not alone. Some versions ago this was the default (except if the song had it\'s own album art)");
+                replaceAlbumart.setSummary(getString(R.string.xsettings_com_aimp_player_replace_albumart_summary));
                 replaceAlbumart.setDefaultValue(r.getBoolean(R.bool.aimp_replace_albumart_def));
 
                 SwitchPreferenceCompat restartOnLongpress = new SwitchPreferenceCompat(contextThemeWrapper);
-                restartOnLongpress.setTitle("Restart music on long press");
-                restartOnLongpress.setSummary("of play/pause button of headset. Some versions ago this was the default");
+                restartOnLongpress.setTitle(getString(R.string.xsettings_com_aimp_player_restart_on_longpress_title));
+                restartOnLongpress.setSummary(getString(R.string.xsettings_com_aimp_player_restart_on_longpress_summary));
                 restartOnLongpress.setKey(getString(R.string.aimp_restart_on_longpress));
                 restartOnLongpress.setDefaultValue(r.getBoolean(R.bool.aimp_restart_on_longpress_def));
 
                 preferenceCategory.addPreference(replaceAlbumart);
                 preferenceCategory.addPreference(restartOnLongpress);
-                preferenceCategory.setTitle("AIMP settings");
+                preferenceCategory.setTitle(getString(R.string.xsettings_com_aimp_player_title));
                 break;
             case PACKAGE_GBOARD:
                 SwitchPreferenceCompat oldCornerRounds = new SwitchPreferenceCompat(contextThemeWrapper);
-                oldCornerRounds.setTitle("Change button corner rounds to be small");
-                oldCornerRounds.setSummary("as in older versions, if you hate that curly ui sh*t");
+                oldCornerRounds.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_old_corner_rounds_title));
+                oldCornerRounds.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_old_corner_rounds_summary));
 
                 EditTextPreference cornerRoundMetric = new EditTextPreference(contextThemeWrapper); //TODO: csak számok
-                cornerRoundMetric.setTitle("Change button corner rounds to this size");
-                cornerRoundMetric.setSummary("It's default is 3");
+                cornerRoundMetric.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));
+                cornerRoundMetric.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary));
                 cornerRoundMetric.setKey(getString(R.string.gboard_custom_round_corner_dip));
-                cornerRoundMetric.setDefaultValue(r.getInteger(R.integer.gboard_custom_round_corner_dip_def));
+                cornerRoundMetric.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
 
                 preferenceCategory.addPreference(oldCornerRounds);
                 preferenceCategory.addPreference(cornerRoundMetric);
-                preferenceCategory.setTitle("GBoard settings");
+                preferenceCategory.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_title));
                 break;
         }
     }

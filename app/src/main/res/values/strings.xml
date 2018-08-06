@@ -9,4 +9,24 @@
     <string name="tweak_item_icon_desc">App\'s icon on launcher</string>
     <string name="tweak_card_label">Tweaks</string>
     <string name="tweak_count">%1$d/%2$d enabled</string>
+    <string name="xsettings_com_miui_home_fix_layout_height_title">Fix layout height</string>
+    <string name="xsettings_com_miui_home_fix_layout_height_sumary">Otherwise if you set the dpi under 270, the 5. row would overflow behind the favourites bar</string>
+    <string name="xsettings_com_miui_home_title">MIUI Home settings</string>
+    <string name="xsettings_com_facebook_orca_cheat_soccer_score_title">Cheat soccer score</string>
+    <string name="xsettings_com_facebook_orca_custom_score_title">Custom score</string>
+    <string name="xsettings_com_facebook_orca_title">Messenger settings</string>
+    <string name="xsettings_com_auxbrain_egginc_prevent_music_title">Prevent music from starting</string>
+    <string name="xsettings_com_auxbrain_egginc_prevent_music_summary">Otherwise music will start for a moment at startup even if you turned it off</string>
+    <string name="xsettings_com_auxbrain_egginc_title">EggInc setings</string>
+    <string name="xsettings_com_auxbrain_egginc_skip_ads_title">Skip ads immediately</string>
+    <string name="xsettings_com_aimp_player_replace_albumart_title">Replace album art on lock screen to the good old AIMP logo</string>
+    <string name="xsettings_com_aimp_player_replace_albumart_summary">I liked it, and maybe I\'m not alone. Some versions ago this was the default behaviour (except if the song had it\'s own album art)</string>
+    <string name="xsettings_com_aimp_player_restart_on_longpress_title">Restart music on long press</string>
+    <string name="xsettings_com_aimp_player_restart_on_longpress_summary">of play/pause button of headset. Some versions ago this was the default</string>
+    <string name="xsettings_com_aimp_player_title">AIMP settings</string>
+    <string name="xsettings_com_google_android_inputmethod_latin_old_corner_rounds_title">Change button corner rounds to be small</string>
+    <string name="xsettings_com_google_android_inputmethod_latin_old_corner_rounds_summary">as in older versions, if you hate that curly ui sh*t</string>
+    <string name="xsettings_com_google_android_inputmethod_latin_corner_round_metric_title">Change button corner rounds to this size</string>
+    <string name="xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary">3 is recommended</string>
+    <string name="xsettings_com_google_android_inputmethod_latin_title">GBoard settings</string>
 </resources>
