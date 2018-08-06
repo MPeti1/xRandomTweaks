@@ -7,5 +7,4 @@ xRandomTweaks includes the following modifications:
 - EggInc: prevents the music from starting when you start the game. originally if you turned the music off, the music starts for a moment, and then stops
 - AIMP: brings back the good old AIMP logo to the lock screen album art, and the ability to restart the music if you long press the pause button on your headset
 ## Future plans
-- Make separate settings for features in app
 - Add more apps, and more modifications
