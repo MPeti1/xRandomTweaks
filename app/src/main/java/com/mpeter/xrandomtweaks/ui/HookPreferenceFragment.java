@@ -115,6 +115,9 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 cornerRoundMetric.setKey(getString(R.string.gboard_custom_round_corner_dip));
                 cornerRoundMetric.setDefaultValue(r.getInteger(R.integer.gboard_custom_round_corner_dip_def));
 
+                preferenceCategory.addPreference(oldCornerRounds);
+                preferenceCategory.addPreference(cornerRoundMetric);
+                preferenceCategory.setTitle("GBoard settings");
                 break;
         }
     }
