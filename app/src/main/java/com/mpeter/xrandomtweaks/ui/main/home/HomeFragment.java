@@ -26,11 +26,12 @@ import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import timber.log.Timber;
 
 public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.OnRecyclerViewItemClickListener {
+    public static final String LOG_TAG = XposedModule.getLogtag(HomeFragment.class);
+
     //Xposed state CardView
     TextView moduleState;
     TextView xposedVersionLabel;
@@ -41,6 +42,8 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     RecyclerView recyclerView;
     TextView tweakCount;
     ArrayList<String> apps = new ArrayList<>();
+    ModuleRecyclerViewAdapter tweakAdapter;
+    LinearLayoutManager layoutManager;
 
     SharedPreferences enabledTweaks;
 
@@ -140,11 +143,12 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
             }
         }
 
-        ModuleRecyclerViewAdapter adapter = new ModuleRecyclerViewAdapter(appInfos, this, getContext());
+        tweakAdapter = new ModuleRecyclerViewAdapter(appInfos, this, getContext());
+        tweakAdapter.setHasStableIds(true);
         DividerItemDecoration decoration = new DividerItemDecoration(getContext(), DividerItemDecoration.HORIZONTAL);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
 
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(tweakAdapter);
         recyclerView.addItemDecoration(decoration);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -152,15 +156,11 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     }
 
     private void setupTweakCount(){
-        int allTweaksCount = SupportedPackages.getPackages().size();
-        int enabledTweaksCount = 0;
+        tweakAdapter.getEnabledAppsCounter().observe(this, integer -> {
+            int allTweaksCount = tweakAdapter.getItemCount();
+            int enabledTweaksCount = integer;
 
-        Collection<?> values = enabledTweaks.getAll().values();
-
-        for (Object value : values) {
-            if (value == Boolean.valueOf(true)) enabledTweaksCount++;
-        }
-
-        tweakCount.setText(getString(R.string.tweak_count, enabledTweaksCount, allTweaksCount));
+            tweakCount.setText(getString(R.string.tweak_count, enabledTweaksCount, allTweaksCount));
+        });
     }
 }

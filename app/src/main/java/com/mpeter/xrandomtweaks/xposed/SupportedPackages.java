@@ -41,6 +41,7 @@ public class SupportedPackages {
         }
 
         packages.remove(Package.PACKAGE_SELF.getPackageName());
+        packages.remove(Package.PACKAGE_FB_MESSENGER.getPackageName());
 
         return packages;
     }

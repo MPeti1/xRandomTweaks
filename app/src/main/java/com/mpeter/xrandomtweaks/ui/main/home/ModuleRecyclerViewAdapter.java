@@ -1,5 +1,6 @@
 package com.mpeter.xrandomtweaks.ui.main.home;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -32,6 +33,7 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
     private Picasso mPicasso;
     private Context mContext;
     private SharedPreferences mXSettings;
+    private final MutableLiveData<Integer> enabledAppsCounter = new MutableLiveData<>();
 
     interface OnRecyclerViewItemClickListener {
         void onListItemClicked(String packageName);
@@ -50,6 +52,7 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         builder.addRequestHandler(new PackageIconRequestHandler(context));
 
         mPicasso = builder.build();
+        enabledAppsCounter.setValue(0);
     }
 
     @NonNull
@@ -132,9 +135,11 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             View itemView = (View) buttonView.getParent().getParent();
-            /*String tag = (String) itemView.getTag();
+            int change;
+            if (isChecked) change = 1;
+            else change = -1;
 
-            mEnabledPackages.edit().putBoolean(tag, isChecked).apply();*/
+            enabledAppsCounter.setValue(enabledAppsCounter.getValue() + change);
 
             SupportedPackages.Package pkg = SupportedPackages.Package.forString((String) itemView.getTag());
 
@@ -165,5 +170,9 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
 
             editor.apply();
         }
+    }
+
+    public MutableLiveData<Integer> getEnabledAppsCounter() {
+        return enabledAppsCounter;
     }
 }
