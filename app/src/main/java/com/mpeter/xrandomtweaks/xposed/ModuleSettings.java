@@ -37,11 +37,11 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
 
         GBoardHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
         GBoardHooks.setUseCustomRoundCorner(sharedPrefs.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
-        GBoardHooks.setCustomRoundCornerDip(sharedPrefs.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
+        GBoardHooks.setCustomRoundCornerDip(Float.valueOf(sharedPrefs.getString(r.getString(R.string.gboard_custom_round_corner_dip), String.valueOf(GBoardHooks.ROUND_CORNER_DIP))));
 
         MessengerHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
         MessengerHooks.setCheatInSoccer(sharedPrefs.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
-        MessengerHooks.setSoccerScoreToCheat(sharedPrefs.getInt(r.getString(R.string.messenger_soccer_score), 0));
+        MessengerHooks.setSoccerScoreToCheat(Integer.valueOf(sharedPrefs.getString(r.getString(R.string.messenger_soccer_score), String.valueOf(0))));
 
         MiuiHomeHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false));
         MiuiHomeHooks.setFixHeightGap(sharedPrefs.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));

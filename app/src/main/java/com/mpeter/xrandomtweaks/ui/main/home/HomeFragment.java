@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -19,9 +20,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.ui.HookPreferenceFragment;
+import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
+import com.mpeter.xrandomtweaks.xposed.ModuleSettingsProvider;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
@@ -106,6 +110,11 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
 
         setupRecyclerView();
         setupTweakCount();
+
+        SharedPreferences sharedPrefs = new RemotePreferences(getContext(), ModuleSettingsProvider.AUTHORITY, App.ENABLED_PACKAGES_PREF_FILE);
+        Resources r = getResources();
+
+        GBoardHooks.setCustomRoundCornerDip(sharedPrefs.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
 
         return view;
     }
