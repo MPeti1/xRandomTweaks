@@ -38,7 +38,7 @@ public class GBoardHooks extends HookedApp {
     private void initRoundCorner(){
         if (ROUND_CORNER == 0f){
             if (XposedModule.getResources() != null) {
-                ROUND_CORNER = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ROUND_CORNER_DIP, XposedModule.getResources().getDisplayMetrics());
+                ROUND_CORNER = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, customRoundCornerDip, XposedModule.getResources().getDisplayMetrics());
             } else XposedBridge.log(LOG_TAG + "modres nem elérhető");
         }
     }
@@ -47,6 +47,8 @@ public class GBoardHooks extends HookedApp {
         XposedHelpers.findAndHookMethod("android.graphics.Canvas", loadPackageParam.classLoader, "drawRoundRect", float.class, float.class, float.class, float.class, float.class, float.class, Paint.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!hooksEnabled || !useCustomRoundCorner) return;
+
                 initRoundCorner();
 
                 param.args[4] = ROUND_CORNER;
@@ -57,6 +59,8 @@ public class GBoardHooks extends HookedApp {
         XposedHelpers.findAndHookMethod("android.graphics.Canvas", loadPackageParam.classLoader, "drawRoundRect", RectF.class, float.class, float.class, Paint.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!hooksEnabled || !useCustomRoundCorner) return;
+
                 initRoundCorner();
 
                 param.args[1] = ROUND_CORNER;
