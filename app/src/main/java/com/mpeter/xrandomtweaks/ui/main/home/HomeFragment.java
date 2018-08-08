@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,11 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.ui.HookPreferenceFragment;
-import com.mpeter.xrandomtweaks.xposed.ModuleSettingsProvider;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
@@ -34,6 +31,8 @@ import timber.log.Timber;
 
 public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.OnRecyclerViewItemClickListener {
     public static final String LOG_TAG = XposedModule.getLogtag(HomeFragment.class);
+
+    private static HomeFragment statik;
 
     //Xposed state CardView
     TextView moduleState;
@@ -56,8 +55,11 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     public HomeFragment() {
     }
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    public static HomeFragment getInstance() {
+        if (statik == null)
+            statik = new HomeFragment();
+
+        return statik;
     }
 
     @Override
@@ -109,9 +111,6 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
 
         setupRecyclerView();
         setupTweakCount();
-
-        SharedPreferences sharedPrefs = new RemotePreferences(getContext(), ModuleSettingsProvider.AUTHORITY, App.ENABLED_PACKAGES_PREF_FILE);
-        Resources r = getResources();
 
         return view;
     }

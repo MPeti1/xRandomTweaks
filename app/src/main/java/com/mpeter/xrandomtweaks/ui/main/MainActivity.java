@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
         fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction()
-                .add(R.id.main_fragment, HomeFragment.newInstance())
+                .add(R.id.main_fragment, HomeFragment.getInstance())
                 .commit();
     }
 
@@ -55,5 +55,12 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
         snackbar.setText(text).setDuration(duration);
         if (action != null) snackbar.setAction(action.getText(), action.getAction());
         snackbar.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_fragment, HomeFragment.getInstance())
+                .commit();
     }
 }
