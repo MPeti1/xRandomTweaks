@@ -37,7 +37,7 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
 
         GBoardHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
         GBoardHooks.setUseCustomRoundCorner(sharedPrefs.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
-        GBoardHooks.setCustomRoundCornerDip(Float.valueOf(sharedPrefs.getString(r.getString(R.string.gboard_custom_round_corner_dip), String.valueOf(GBoardHooks.ROUND_CORNER_DIP))));
+        GBoardHooks.setCustomRoundCornerDip(sharedPrefs.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
 
         MessengerHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
         MessengerHooks.setCheatInSoccer(sharedPrefs.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
