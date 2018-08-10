@@ -34,8 +34,6 @@ public class CurrentApp {
         setAppInfo(loadPackageParam.appInfo);
         setSharedPrefs(new XSharedPreferences(loadPackageParam.packageName));
 
-//        initContextGetterHook();
-
         initialized = true;
     }
 
@@ -56,17 +54,6 @@ public class CurrentApp {
     public static MutableLiveData<Context> getApplicationContext() {
         return mAppContext;
     }
-
-    /*private static void initContextGetterHook() {
-        XposedHelpers.findAndHookMethod(Application.class.getCanonicalName(), sClassLoader, "onCreate", Context.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                sAppContext = (Context) param.args[0];
-            }
-        });
-    }*/
 
     //bugos ha többször hivatkozol egy adatra, mert azt nézi hogy hányszor hivatkoztál
     //és mennyi adatot adsz neki, és nem azt hogy létezik-e annyi adat ahanyadikra hivatkozol
@@ -89,25 +76,25 @@ public class CurrentApp {
     }
 
     private static void setClassLoader(ClassLoader classLoader) {
-        if (classLoader == null) Timber.w("%sclassLoader is null in loadPackageParam", LOG_TAG);
+        if (classLoader == null) Timber.e("%sclassLoader is null in loadPackageParam", LOG_TAG);
         else mClassLoader = classLoader;
     }
 
     private static void setPackageName(String packageName) {
         if (packageName == null || packageName.isEmpty())
-            Timber.w("%spackageName is null or empty in loadPackageParam", LOG_TAG);
+            Timber.e("%spackageName is null or empty in loadPackageParam", LOG_TAG);
         else mPackageName = packageName;
     }
 
     private static void setAppInfo(ApplicationInfo appInfo) {
-        if (appInfo == null) Timber.w("%sappInfo in loadPackageParam is null", LOG_TAG);
+        if (appInfo == null) Timber.e("%sappInfo in loadPackageParam is null", LOG_TAG);
         else if (!appInfo.packageName.equals(getPackageName()))
             Timber.w(LOG_TAG + "appInfo (" + appInfo.packageName + ") belongs to an other app (" + getPackageName() + ")");
         else mAppInfo = appInfo;
     }
 
     private static void setSharedPrefs(XSharedPreferences sharedPrefs) {
-        if (sharedPrefs == null) Timber.w("%ssharedPrefs is null", LOG_TAG);
+        if (sharedPrefs == null) Timber.e("%ssharedPrefs is null", LOG_TAG);
         else mSharedPrefs = sharedPrefs;
     }
 }

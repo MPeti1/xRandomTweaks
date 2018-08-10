@@ -1,9 +1,12 @@
 package com.mpeter.xrandomtweaks.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.TypedValue;
@@ -14,12 +17,20 @@ import com.mpeter.xrandomtweaks.BuildConfig;
 import com.mpeter.xrandomtweaks.IntNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.LongNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.R;
+import com.mpeter.xrandomtweaks.xposed.SpecialEventReceiver;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
+import com.mpeter.xrandomtweaks.xposed.XposedModule;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
+import java.util.Iterator;
+import java.util.List;
+
+import timber.log.Timber;
+
 public class HookPreferenceFragment extends PreferenceFragmentCompat {
     public static final String EXTRA_PACKAGE_NAME = "package_name";
+    public static final String LOG_TAG = XposedModule.getLogtag(HookPreferenceFragment.class);
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -29,7 +40,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
 
         final SupportedPackages.Package pkg = SupportedPackages.Package.forString(bundle.getString(EXTRA_PACKAGE_NAME));
 
-        Context context = getActivity();
+        Context context = getContext();
 
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(context);
         setPreferenceScreen(preferenceScreen);
@@ -42,8 +53,13 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
         PreferenceCategory preferenceCategory = new PreferenceCategory(contextThemeWrapper);
         preferenceScreen.addPreference(preferenceCategory);
 
+        Preference applyChanges = new Preference(contextThemeWrapper);
+        applyChanges.setTitle("Apply changes");
+        applyChanges.setSummary("This will restart the target app");
+
         Resources r = getResources();
 
+        assert pkg != null;
         switch (pkg) {
             case PACKAGE_SELF:
                 break;
@@ -53,6 +69,11 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 layoutHeightFix.setSummary(getString(R.string.xsettings_com_miui_home_fix_layout_height_sumary));
                 layoutHeightFix.setKey(getString(R.string.miuihome_fix_heightgap));
                 layoutHeightFix.setDefaultValue(r.getBoolean(R.bool.miuihome_fix_heightgap_def));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_MIUI_HOME);
+                    return true;
+                });
 
                 preferenceCategory.addPreference(layoutHeightFix);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_miui_home_title));
@@ -69,6 +90,11 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 cheatedScore.setKey(getString(R.string.messenger_soccer_score));
                 cheatedScore.setDefaultValue(String.valueOf(r.getInteger(R.integer.messenger_soccer_score_def)));
 
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_FB_MESSENGER);
+                    return true;
+                });
+
                 preferenceCategory.addPreference(cheatSoccer);
                 preferenceCategory.addPreference(cheatedScore);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_facebook_orca_title));
@@ -79,6 +105,11 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 preventMusic.setSummary(getString(R.string.xsettings_com_auxbrain_egginc_prevent_music_summary));
                 preventMusic.setKey(getString(R.string.egginc_prevent_music));
                 preventMusic.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_music_def));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_EGGINC);
+                    return true;
+                });
 
                 preferenceCategory.addPreference(preventMusic);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_title));
@@ -104,6 +135,11 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 restartOnLongpress.setSummary(getString(R.string.xsettings_com_aimp_player_restart_on_longpress_summary));
                 restartOnLongpress.setKey(getString(R.string.aimp_restart_on_longpress));
                 restartOnLongpress.setDefaultValue(r.getBoolean(R.bool.aimp_restart_on_longpress_def));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_AIMP);
+                    return true;
+                });
 
                 preferenceCategory.addPreference(replaceAlbumart);
                 preferenceCategory.addPreference(restartOnLongpress);
@@ -135,17 +171,40 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                     return charSequence;
                 }});*/
 
-                LongNumberEditTextPreference preference = new LongNumberEditTextPreference(contextThemeWrapper);
-                preference.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));
-                preference.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary));
-                preference.setKey(getString(R.string.gboard_custom_round_corner_dip));
-                preference.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
+                LongNumberEditTextPreference cornerRoundSize = new LongNumberEditTextPreference(contextThemeWrapper);
+                cornerRoundSize.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));
+                cornerRoundSize.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary));
+                cornerRoundSize.setKey(getString(R.string.gboard_custom_round_corner_dip));
+                cornerRoundSize.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_GBOARD);
+                    return true;
+                });
 
                 preferenceCategory.addPreference(oldCornerRounds);
 //                preferenceCategory.addPreference(cornerRoundMetric);
-                preferenceCategory.addPreference(preference);
+                preferenceCategory.addPreference(cornerRoundSize);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_title));
                 break;
         }
+
+        preferenceCategory.addPreference(applyChanges);
+    }
+
+    private static void applyChanges(Context context, SupportedPackages.Package pkg){
+        Intent intent = new Intent(SpecialEventReceiver.ACTION_EXIT_APP);
+        intent.setPackage(pkg.getPackageName());
+
+        List<ResolveInfo> resolveInfos = context.getPackageManager().queryBroadcastReceivers(intent, 0);
+        Iterator<ResolveInfo> iterator = resolveInfos.iterator();
+        StringBuilder log = new StringBuilder();
+        while (iterator.hasNext()){
+           log.append(iterator.next().toString());
+           if (iterator.hasNext()) log.append("\n");
+        }
+        Timber.tag(LOG_TAG).i(log.toString());
+
+        context.sendBroadcast(intent);
     }
 }

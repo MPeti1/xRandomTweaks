@@ -1,12 +1,15 @@
 package com.mpeter.xrandomtweaks.xposed;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.XModuleResources;
 
 import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
+
+import java.io.File;
 
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
@@ -38,14 +41,16 @@ public class XposedModule {
         Timber.tag(LOG_TAG).d("initializing in %s", loadPackageParam.packageName);
 
         setSharedPrefs(new XSharedPreferences(PACKAGE));
-        setResources(XModuleResources.createInstance(mModulePath, null));
+        setResources(mModulePath);
         setupXSettings(loadPackageParam);
+        setupBroadcastReceiver();
 
         initialized = true;
     }
 
     public static void setModulePath(String modulePath) {
         mModulePath = modulePath;
+        Timber.tag(LOG_TAG).i("Module path is %s", modulePath);
     }
 
     public static String getModulePath() {
@@ -68,6 +73,15 @@ public class XposedModule {
         }
 
         mResources = resources;
+    }
+
+    public static void setResources(String modulePath) {
+        File moduleAPK = new File(modulePath);
+        if (!moduleAPK.exists()){
+            modulePath = refreshModulePath(modulePath);
+        }
+        Timber.tag(LOG_TAG).d("Final modulePath is %s", modulePath);
+        setResources(XModuleResources.createInstance(modulePath, null));
     }
 
     public static boolean needsResources() {
@@ -124,6 +138,12 @@ public class XposedModule {
         new ModuleSettings();
     }
 
+    private static void setupBroadcastReceiver() {
+        SpecialEventReceiver specialEventReceiver = new SpecialEventReceiver();
+        IntentFilter filter = new IntentFilter(SpecialEventReceiver.ACTION_EXIT_APP);
+        systemContext.registerReceiver(specialEventReceiver, filter);
+    }
+
     public static XSharedPreferences getSharedPrefs() {
         return mSharedPrefs;
     }
@@ -133,6 +153,36 @@ public class XposedModule {
     }
 
     public static boolean isModuleEnabled() {
-        return false;
+        return true;
+    }
+
+    public static String refreshModulePath(String oldPath){
+        Timber.tag(LOG_TAG).d("refreshModulePath called");
+
+        File moduleAPK = new File(oldPath);
+        String[] split = moduleAPK.getAbsolutePath().split("/");
+        StringBuilder filePath = new StringBuilder();
+        for (int i = 4; i < split.length; i++) {
+            filePath.append("/");
+            filePath.append(split[i]);
+        }
+
+        File moduleFolder = moduleAPK.getParentFile();
+        String moduleFolderPath = moduleFolder.getAbsolutePath();
+        String baseFolderPath = moduleFolderPath.substring(0, moduleFolderPath.lastIndexOf("-"));
+
+        int counter = 1;
+        while (!(moduleFolder = new File(moduleFolderPath)).exists()){
+            moduleFolderPath = baseFolderPath + "-" + counter;
+            Timber.tag(LOG_TAG).d("Searching module folder: %s", moduleFolderPath);
+
+            if (counter >= 50)
+                Timber.tag(LOG_TAG).wtf("Couldn't find module folder");
+
+            counter++;
+        }
+
+        Timber.tag(LOG_TAG).d("Found module folder at %s", moduleFolderPath);
+        return moduleFolderPath + filePath;
     }
 }
