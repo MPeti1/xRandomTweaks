@@ -15,7 +15,6 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import timber.log.Timber;
 
 public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackageResources, IXposedHookZygoteInit {
     public static final String LOG_TAG = XposedModule.getLogtag(XposedInit.class);
@@ -65,8 +64,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(resparam.packageName);
 
         if (pkg == null) return;
-        if (pkg == SupportedPackages.Package.PACKAGE_MIUI_HOME)
-            Timber.tag(LOG_TAG).d(resparam.packageName + " got resources of " + resparam.res.getPackageName());
 
         if (XposedModule.needsResources())
             XposedModule.setResources(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
@@ -78,7 +75,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_EGGINC:
             case PACKAGE_AIMP:
             case PACKAGE_GBOARD:
-//                if (CurrentApp.getPackageName().equals(resparam.packageName))
                 CurrentApp.initResources(resparam);
                 break;
             default:

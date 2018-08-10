@@ -9,6 +9,13 @@ import timber.log.Timber;
 public class SpecialEventReceiver extends BroadcastReceiver {
     public static final String LOG_TAG = XposedModule.getLogtag(SpecialEventReceiver.class);
     public static final String ACTION_EXIT_APP = "com.mpeter.xrandomtweaks.ACTION_EXIT_APP";
+
+    public SpecialEventReceiver() {
+        super();
+
+        Timber.tag(LOG_TAG).d("initialized");
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() == null || intent.getAction().isEmpty()){

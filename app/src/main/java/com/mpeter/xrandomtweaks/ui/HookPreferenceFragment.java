@@ -2,7 +2,6 @@ package com.mpeter.xrandomtweaks.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,11 +21,6 @@ import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
-
-import java.util.Iterator;
-import java.util.List;
-
-import timber.log.Timber;
 
 public class HookPreferenceFragment extends PreferenceFragmentCompat {
     public static final String EXTRA_PACKAGE_NAME = "package_name";
@@ -193,17 +187,9 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
     }
 
     private static void applyChanges(Context context, SupportedPackages.Package pkg){
-        Intent intent = new Intent(SpecialEventReceiver.ACTION_EXIT_APP);
+        Intent intent = new Intent();
+        intent.setAction(SpecialEventReceiver.ACTION_EXIT_APP);
         intent.setPackage(pkg.getPackageName());
-
-        List<ResolveInfo> resolveInfos = context.getPackageManager().queryBroadcastReceivers(intent, 0);
-        Iterator<ResolveInfo> iterator = resolveInfos.iterator();
-        StringBuilder log = new StringBuilder();
-        while (iterator.hasNext()){
-           log.append(iterator.next().toString());
-           if (iterator.hasNext()) log.append("\n");
-        }
-        Timber.tag(LOG_TAG).i(log.toString());
 
         context.sendBroadcast(intent);
     }

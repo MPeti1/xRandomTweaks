@@ -1,5 +1,6 @@
 package com.mpeter.xrandomtweaks.xposed;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import com.mpeter.xrandomtweaks.BuildConfig;
 
 import java.io.File;
 
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -43,9 +45,10 @@ public class XposedModule {
         setSharedPrefs(new XSharedPreferences(PACKAGE));
         setResources(mModulePath);
         setupXSettings(loadPackageParam);
-        setupBroadcastReceiver();
+        setupBroadcastReceiver(loadPackageParam);
 
         initialized = true;
+        Timber.tag(LOG_TAG).d("initialization complete");
     }
 
     public static void setModulePath(String modulePath) {
@@ -138,10 +141,17 @@ public class XposedModule {
         new ModuleSettings();
     }
 
-    private static void setupBroadcastReceiver() {
-        SpecialEventReceiver specialEventReceiver = new SpecialEventReceiver();
-        IntentFilter filter = new IntentFilter(SpecialEventReceiver.ACTION_EXIT_APP);
-        systemContext.registerReceiver(specialEventReceiver, filter);
+    private static void setupBroadcastReceiver(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod(Application.class.getCanonicalName(), loadPackageParam.classLoader, "onCreate", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                SpecialEventReceiver specialEventReceiver = new SpecialEventReceiver();
+                IntentFilter filter = new IntentFilter(SpecialEventReceiver.ACTION_EXIT_APP);
+
+                Context context = (Context) param.thisObject;
+                context.registerReceiver(specialEventReceiver, filter);
+            }
+        });
     }
 
     public static XSharedPreferences getSharedPrefs() {
@@ -153,7 +163,7 @@ public class XposedModule {
     }
 
     public static boolean isModuleEnabled() {
-        return true;
+        return false;
     }
 
     public static String refreshModulePath(String oldPath){
