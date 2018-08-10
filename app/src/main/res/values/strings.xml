@@ -29,4 +29,6 @@
     <string name="xsettings_com_google_android_inputmethod_latin_corner_round_metric_title">Change button corner rounds to this size</string>
     <string name="xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary">3 is recommended</string>
     <string name="xsettings_com_google_android_inputmethod_latin_title">GBoard settings</string>
+    <string name="xsettings_general_apply_changes_title">Force apply changes</string>
+    <string name="xsettings_general_apply_changes_summary">This will restart the target app</string>
 </resources>

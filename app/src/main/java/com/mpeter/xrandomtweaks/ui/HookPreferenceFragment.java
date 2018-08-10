@@ -48,8 +48,8 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
         preferenceScreen.addPreference(preferenceCategory);
 
         Preference applyChanges = new Preference(contextThemeWrapper);
-        applyChanges.setTitle("Apply changes");
-        applyChanges.setSummary("This will restart the target app");
+        applyChanges.setTitle(getString(R.string.xsettings_general_apply_changes_title));
+        applyChanges.setSummary(getString(R.string.xsettings_general_apply_changes_summary));
 
         Resources r = getResources();
 
@@ -145,25 +145,6 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 oldCornerRounds.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_old_corner_rounds_summary));
                 oldCornerRounds.setKey(r.getString(R.string.gboard_use_custom_round_corner));
                 oldCornerRounds.setDefaultValue(r.getBoolean(R.bool.gboard_use_custom_round_corner_def));
-
-                /*EditTextPreference cornerRoundMetric = new EditTextPreference(contextThemeWrapper); //TODO: csak számok
-                cornerRoundMetric.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));
-                cornerRoundMetric.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary));
-                cornerRoundMetric.setKey(getString(R.string.gboard_custom_round_corner_dip));
-                cornerRoundMetric.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
-
-                EditText editText = cornerRoundMetric.getEditText();
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                editText.setFilters(new InputFilter[]{(charSequence, i, i1, spanned, i2, i3) -> {
-                    float cornerRoundSize = Float.parseFloat(charSequence.toString());
-
-                    if (cornerRoundSize < 0) {
-                        Toast.makeText(getContext(), "Invalid number. ", Toast.LENGTH_SHORT).show();
-                        return null;
-                    }
-                    charSequence = charSequence.subSequence(1, charSequence.length());
-                    return charSequence;
-                }});*/
 
                 LongNumberEditTextPreference cornerRoundSize = new LongNumberEditTextPreference(contextThemeWrapper);
                 cornerRoundSize.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));

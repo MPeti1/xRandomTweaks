@@ -102,33 +102,6 @@ public class XposedModule {
     }
 
     private static void setupXSettings(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        /*if (mEnabledPackages != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
-        else if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
-        else mEnabledPackages = sharedPrefs;*/
-
-       /* XposedHelpers.findAndHookMethod("android.app.ActivityThread", loadPackageParam.classLoader, "handleBindApplication", "android.app.ActivityThread.AppBindData", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                *//*Application application = (Application) XposedHelpers.callMethod(
-                        XposedHelpers.getObjectField(param.args[0], "info"),
-                        "makeApplication",
-                        false,
-                        null
-                );
-
-                XposedHelpers.callMethod(
-                        param.thisObject,
-                        "installContentProviders",
-                        application,
-                        XposedHelpers.getObjectField(param.args[0], "providers");
-                );*//*
-
-                new ModuleSettings();
-            }
-        });*/
-
         systemContext = (Context) XposedHelpers.callMethod(
                 XposedHelpers.callStaticMethod(
                         XposedHelpers.findClass("android.app.ActivityThread", loadPackageParam.classLoader),

@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
             try {
                 appInfos.add(packageManager.getPackageInfo(apps.get(i), PackageManager.GET_META_DATA).applicationInfo);
             } catch (PackageManager.NameNotFoundException e) {
-                Timber.e(e, "Package not found: %s", apps.get(i));
+                Timber.tag(LOG_TAG).e(e, "Package not found: %s", apps.get(i));
             }
         }
 
