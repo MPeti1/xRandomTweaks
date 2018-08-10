@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.mpeter.xrandomtweaks.App;
@@ -32,13 +34,12 @@ import timber.log.Timber;
 public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.OnRecyclerViewItemClickListener {
     public static final String LOG_TAG = XposedModule.getLogtag(HomeFragment.class);
 
-    private static HomeFragment statik;
-
     //Xposed state CardView
     TextView moduleState;
     TextView xposedVersionLabel;
     TextView xposedVersion;
     Button enableModule;
+    Switch preloadDisabledHooks;
 
     //Tweaks CardView
     RecyclerView recyclerView;
@@ -47,8 +48,8 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     ModuleRecyclerViewAdapter tweakAdapter;
     LinearLayoutManager layoutManager;
 
-    SharedPreferences enabledTweaks;
-
+    SharedPreferences xSettings;
+    Resources r;
 
     private OnFragmentInteractionListener mListener;
 
@@ -56,10 +57,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     }
 
     public static HomeFragment getInstance() {
-        if (statik == null)
-            statik = new HomeFragment();
-
-        return statik;
+        return new HomeFragment();
     }
 
     @Override
@@ -77,7 +75,8 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        enabledTweaks = getContext().getSharedPreferences(App.ENABLED_PACKAGES_PREF_FILE, Context.MODE_PRIVATE);
+        xSettings = getContext().getSharedPreferences(App.XSETTINGS_PREF_FILE, Context.MODE_PRIVATE);
+        r = getResources();
     }
 
     @Override
@@ -88,6 +87,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         xposedVersionLabel = view.findViewById(R.id.textview_xposed_version_label);
         xposedVersion = view.findViewById(R.id.textview_xposed_version);
         enableModule = view.findViewById(R.id.button_enable_module);
+        preloadDisabledHooks = view.findViewById(R.id.switch_preload_disabled_hooks);
         tweakCount = view.findViewById(R.id.textview_tweak_count);
 
         recyclerView = view.findViewById(R.id.modules_recyclerview);
@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         } else {
             moduleState.setText(R.string.module_state_disabled);
             moduleState.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_red500));
+            enableModule.setVisibility(View.GONE);
         }
 
         enableModule.setOnClickListener(v -> startActivity(
@@ -107,6 +108,17 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
                         new ComponentName(
                                 "de.robv.android.xposed.installer",
                                 "de.robv.android.xposed.installer.WelcomeActivity")))
+        );
+
+        preloadDisabledHooks.setChecked(xSettings.getBoolean(
+                r.getString(R.string.preload_disabled_hooks),
+                r.getBoolean(R.bool.preload_disabled_hooks_def))
+        );
+
+        preloadDisabledHooks.setOnCheckedChangeListener((compoundButton, enabled1)
+                -> xSettings.edit()
+                .putBoolean(r.getString(R.string.preload_disabled_hooks), enabled1)
+                .apply()
         );
 
         setupRecyclerView();

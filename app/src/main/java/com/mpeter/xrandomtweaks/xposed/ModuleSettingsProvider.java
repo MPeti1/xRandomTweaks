@@ -11,7 +11,7 @@ public class ModuleSettingsProvider extends RemotePreferenceProvider {
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".settings";
 
     public ModuleSettingsProvider() {
-        super(AUTHORITY, new String[]{App.ENABLED_PACKAGES_PREF_FILE});
+        super(AUTHORITY, new String[]{App.XSETTINGS_PREF_FILE});
         Timber.tag(LOG_TAG).d("initialized");
     }
 }

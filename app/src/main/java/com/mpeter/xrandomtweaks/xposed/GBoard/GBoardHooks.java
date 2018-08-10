@@ -69,6 +69,27 @@ public class GBoardHooks extends HookedApp {
         });
     }
 
+    private void hookDebugHooks(XC_LoadPackage.LoadPackageParam loadPackageParam){
+        Class SoftKeyViewClazz = null;
+
+        try {
+            SoftKeyViewClazz = Class.forName("com.google.android.apps.inputmethod.libs.framework.keyboard.SoftKeyView");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        XposedBridge.hookAllConstructors(SoftKeyViewClazz, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                String log = "constructor hooked:\n";
+                for (int i = 0; i < param.args.length; i++) {
+                    log += param.args[i];
+                    log += "\n";
+                }
+            }
+        });
+    }
+
     public static void setHooksEnabled(boolean hooksEnabled) {
         GBoardHooks.hooksEnabled = hooksEnabled;
     }

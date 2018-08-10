@@ -13,8 +13,6 @@ import android.view.ContextThemeWrapper;
 
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
-import com.mpeter.xrandomtweaks.IntNumberEditTextPreference;
-import com.mpeter.xrandomtweaks.LongNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.xposed.SpecialEventReceiver;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
@@ -38,7 +36,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
 
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(context);
         setPreferenceScreen(preferenceScreen);
-        getPreferenceManager().setSharedPreferencesName(App.ENABLED_PACKAGES_PREF_FILE);
+        getPreferenceManager().setSharedPreferencesName(App.XSETTINGS_PREF_FILE);
 
         TypedValue tValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.preferenceTheme, tValue, true);
@@ -158,7 +156,6 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 });
 
                 preferenceCategory.addPreference(oldCornerRounds);
-//                preferenceCategory.addPreference(cornerRoundMetric);
                 preferenceCategory.addPreference(cornerRoundSize);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_title));
                 break;

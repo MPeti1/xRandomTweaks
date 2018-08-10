@@ -109,7 +109,7 @@ public class XposedModule {
                 "getSystemContext"
         );
 
-        mXSettings = new RemotePreferences(systemContext, ModuleSettingsProvider.AUTHORITY, App.ENABLED_PACKAGES_PREF_FILE);
+        mXSettings = new RemotePreferences(systemContext, ModuleSettingsProvider.AUTHORITY, App.XSETTINGS_PREF_FILE);
 
         new ModuleSettings();
     }

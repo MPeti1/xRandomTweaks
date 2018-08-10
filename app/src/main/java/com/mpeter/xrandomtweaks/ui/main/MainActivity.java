@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
     FragmentManager fragmentManager;
     Snackbar snackbar;
 
+    HomeFragment homeFragment = HomeFragment.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
     @Override
     public void onBackPressed() {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment, HomeFragment.getInstance())
+                .replace(R.id.main_fragment, homeFragment)
                 .commit();
     }
 }

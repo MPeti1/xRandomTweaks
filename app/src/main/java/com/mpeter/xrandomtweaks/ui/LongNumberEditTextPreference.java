@@ -1,4 +1,4 @@
-package com.mpeter.xrandomtweaks;
+package com.mpeter.xrandomtweaks.ui;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,11 +8,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 
-public class IntNumberEditTextPreference extends Preference implements TextWatcher {
+import com.mpeter.xrandomtweaks.R;
+
+public class LongNumberEditTextPreference extends Preference implements TextWatcher {
     EditText cornerRoundsET;
     Resources r;
 
-    public IntNumberEditTextPreference(Context context) {
+    public LongNumberEditTextPreference(Context context) {
         super(context);
         setWidgetLayoutResource(R.layout.edittext_pref_widget);
         r = getContext().getResources();
@@ -24,7 +26,7 @@ public class IntNumberEditTextPreference extends Preference implements TextWatch
         holder.itemView.setClickable(false);
         cornerRoundsET = holder.itemView.findViewById(R.id.current_dip);
 
-        cornerRoundsET.setText(String.valueOf(getSharedPreferences().getInt(getKey(), r.getInteger(R.integer.gboard_custom_round_corner_dip_def))));
+        cornerRoundsET.setText(String.valueOf(getSharedPreferences().getFloat(getKey(), r.getInteger(R.integer.gboard_custom_round_corner_dip_def))));
         cornerRoundsET.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus && cornerRoundsET.getText().toString().isEmpty())
                 cornerRoundsET.setText(r.getInteger(R.integer.gboard_custom_round_corner_dip_def));
@@ -52,6 +54,6 @@ public class IntNumberEditTextPreference extends Preference implements TextWatch
     @Override
     public void afterTextChanged(Editable editable) {
         if (!editable.toString().isEmpty())
-            getSharedPreferences().edit().putInt(getKey(), Integer.parseInt(editable.toString())).apply();
+            getSharedPreferences().edit().putFloat(getKey(), Float.parseFloat(editable.toString())).apply();
     }
 }
