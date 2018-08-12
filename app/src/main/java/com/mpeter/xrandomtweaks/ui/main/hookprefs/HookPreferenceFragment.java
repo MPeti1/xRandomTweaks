@@ -1,4 +1,4 @@
-package com.mpeter.xrandomtweaks.ui;
+package com.mpeter.xrandomtweaks.ui.main.hookprefs;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +14,8 @@ import android.view.ContextThemeWrapper;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
 import com.mpeter.xrandomtweaks.R;
+import com.mpeter.xrandomtweaks.ui.IntNumberEditTextPreference;
+import com.mpeter.xrandomtweaks.ui.LongNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.xposed.SpecialEventReceiver;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
@@ -23,6 +25,10 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 public class HookPreferenceFragment extends PreferenceFragmentCompat {
     public static final String EXTRA_PACKAGE_NAME = "package_name";
     public static final String LOG_TAG = XposedModule.getLogtag(HookPreferenceFragment.class);
+
+    public static HookPreferenceFragment getInstance(){
+        return new HookPreferenceFragment();
+    }
 
     @Override
     public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {

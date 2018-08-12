@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
-import com.mpeter.xrandomtweaks.ui.HookPreferenceFragment;
+import com.mpeter.xrandomtweaks.ui.main.hookprefs.HookPreferenceFragment;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
@@ -33,6 +33,7 @@ import timber.log.Timber;
 
 public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.OnRecyclerViewItemClickListener {
     public static final String LOG_TAG = XposedModule.getLogtag(HomeFragment.class);
+    public static final String TAG = "HomeFragment";
 
     //Xposed state CardView
     TextView moduleState;
@@ -97,10 +98,10 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         if (enabled){
             moduleState.setText(R.string.module_state_enabled);
             moduleState.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_green500));
+            enableModule.setVisibility(View.GONE);
         } else {
             moduleState.setText(R.string.module_state_disabled);
             moduleState.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_red500));
-            enableModule.setVisibility(View.GONE);
         }
 
         enableModule.setOnClickListener(v -> startActivity(

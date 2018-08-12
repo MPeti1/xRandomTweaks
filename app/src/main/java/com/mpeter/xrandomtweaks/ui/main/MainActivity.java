@@ -3,21 +3,30 @@ package com.mpeter.xrandomtweaks.ui.main;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.ArrayMap;
 import android.widget.Toast;
 
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.SnackbarAction;
 import com.mpeter.xrandomtweaks.ui.main.home.HomeFragment;
+import com.mpeter.xrandomtweaks.ui.main.hookprefs.HookPreferenceFragment;
+import com.mpeter.xrandomtweaks.xposed.XposedModule;
+
+import java.util.Objects;
 
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements Screen, HomeFragment.OnFragmentInteractionListener {
+    public static final String LOG_TAG = XposedModule.getLogtag(MainActivity.class);
+    public static final String FRAGMENT_HOME = "HomeFragment";
+    public static final String FRAGMENT_HOOKSETTINGS = "HookPreferenceFragment";
+
+    ArrayMap<String, Fragment> fragmentArrayMap = new ArrayMap<>();
     FragmentManager fragmentManager;
     Snackbar snackbar;
-
-    HomeFragment homeFragment = HomeFragment.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,9 +36,7 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
         snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "", 0);
         fragmentManager = getSupportFragmentManager();
 
-        fragmentManager.beginTransaction()
-                .add(R.id.main_fragment, HomeFragment.getInstance())
-                .commit();
+        loadFragment(FRAGMENT_HOME);
     }
 
     @Override
@@ -61,8 +68,30 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
 
     @Override
     public void onBackPressed() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment, homeFragment)
+        if (Objects.equals(fragmentManager.findFragmentById(R.id.main_fragment).getTag(), FRAGMENT_HOME))
+            super.onBackPressed();
+        else loadFragment(FRAGMENT_HOME);
+    }
+
+    private void loadFragment(String TAG){
+        if (!fragmentArrayMap.containsKey(TAG)){
+            switch (TAG){
+                case FRAGMENT_HOME:
+                    fragmentArrayMap.put(TAG, HomeFragment.getInstance());
+
+                    break;
+
+                case FRAGMENT_HOOKSETTINGS:
+                    fragmentArrayMap.put(TAG, HookPreferenceFragment.getInstance());
+                    break;
+
+                default:
+                    Timber.tag(LOG_TAG).wtf("Unknown fragment tag: %s", TAG);;
+            }
+        }
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_fragment, fragmentArrayMap.get(TAG), TAG)
                 .commit();
     }
 }
