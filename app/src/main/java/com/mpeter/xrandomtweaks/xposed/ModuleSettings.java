@@ -11,9 +11,6 @@ import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
 import com.mpeter.xrandomtweaks.xposed.Messenger.MessengerHooks;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import timber.log.Timber;
 
 public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -25,7 +22,7 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
         SharedPreferences sharedPrefs = XposedModule.getXSettings();
         XModuleResources r = XposedModule.getResources();
 
-        setPreloadDisabledHooks(sharedPrefs.getBoolean(r.getString(R.string.preload_disabled_hooks_key), false));
+        setPreloadDisabledHooks(sharedPrefs.getBoolean(r.getString(R.string.preload_disabled_hooks), false));
 
         AIMPHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.aimp_hooks_enabled), false));
         AIMPHooks.setReplaceAlbumArt(sharedPrefs.getBoolean(r.getString(R.string.aimp_replace_albumart), false));
@@ -34,10 +31,11 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
         EggIncHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.egginc_hooks_enabled), false));
         EggIncHooks.setPreventMusic(sharedPrefs.getBoolean(r.getString(R.string.egginc_prevent_music), false));
         EggIncHooks.setSkipAds(sharedPrefs.getBoolean(r.getString(R.string.egginc_skip_ads), false));
+        EggIncHooks.setPreventAdLoad(sharedPrefs.getBoolean(r.getString(R.string.egginc_prevent_load_ads), false));
 
         GBoardHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
         GBoardHooks.setUseCustomRoundCorner(sharedPrefs.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
-        GBoardHooks.setCustomRoundCornerDip(Float.valueOf(sharedPrefs.getString(r.getString(R.string.gboard_custom_round_corner_dip), String.valueOf(GBoardHooks.ROUND_CORNER_DIP))));
+        GBoardHooks.setCustomRoundCornerDip(sharedPrefs.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
 
         MessengerHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
         MessengerHooks.setCheatInSoccer(sharedPrefs.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
@@ -45,22 +43,6 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
 
         MiuiHomeHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false));
         MiuiHomeHooks.setFixHeightGap(sharedPrefs.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));
-
-        Timber.tag(LOG_TAG).i("miuihome hooks enabled %s, miuihome heightgapfix enabled %s",
-                sharedPrefs.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false),
-                sharedPrefs.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));
-
-        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
-
-        StringBuilder log = new StringBuilder();
-        Map<String, ?> prefs = sharedPrefs.getAll();
-        Iterator<? extends Map.Entry<String, ?>> entries = prefs.entrySet().iterator();
-        while (entries.hasNext()){
-            Map.Entry<String, ?> entry = entries.next();
-            log.append(entry.getKey()).append(": ").append(entry.getValue());
-            if (entries.hasNext()) log.append("\n");
-        }
-        Timber.tag(LOG_TAG).i(log.toString());
     }
 
     public static boolean preloadDisabledHooks() {

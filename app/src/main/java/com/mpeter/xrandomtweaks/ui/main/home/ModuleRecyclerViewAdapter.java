@@ -45,7 +45,7 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         this.mApps = apps;
         this.mListener = listener;
 
-        mXSettings = context.getSharedPreferences(App.ENABLED_PACKAGES_PREF_FILE, Context.MODE_PRIVATE);
+        mXSettings = context.getSharedPreferences(App.XSETTINGS_PREF_FILE, Context.MODE_PRIVATE);
         mContext = context;
 
         Picasso.Builder builder = new Picasso.Builder(context);

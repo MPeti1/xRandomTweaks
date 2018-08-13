@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="preload_disabled_hooks_key">preload_disabled_hooks</string>
+    <bool name="res_test">true</bool>
+
+    <string name="preload_disabled_hooks">preload_disabled_hooks</string>
     <bool name="preload_disabled_hooks_def">false</bool>
 
     <string name="aimp_hooks_enabled">com.aimp.player_hooks_enabled</string>
@@ -16,6 +18,8 @@
     <bool name="egginc_prevent_music_def">false</bool>
     <string name="egginc_skip_ads">com.auxbrain.egginc_skip_ads</string>
     <bool name="egginc_skip_ads_def">false</bool>
+    <string name="egginc_prevent_load_ads">com.auxbrain.egginc_prevent_load_ads</string>
+    <bool name="egginc_prevent_load_ads_def">false</bool>
 
     <string name="gboard_hooks_enabled">com.google.android.inputmethod.latin_hooks_enabled</string>
     <bool name="gboard_hooks_enabled_def">false</bool>

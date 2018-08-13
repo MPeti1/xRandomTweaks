@@ -25,8 +25,13 @@
     <string name="xsettings_com_aimp_player_restart_on_longpress_summary">of play/pause button of headset. Some versions ago this was the default</string>
     <string name="xsettings_com_aimp_player_title">AIMP settings</string>
     <string name="xsettings_com_google_android_inputmethod_latin_old_corner_rounds_title">Change button corner rounds to be small</string>
-    <string name="xsettings_com_google_android_inputmethod_latin_old_corner_rounds_summary">as in older versions, if you hate that curly ui sh*t</string>
+    <string name="xsettings_com_google_android_inputmethod_latin_old_corner_rounds_summary">as in older versions, if you hate that curly ui design</string>
     <string name="xsettings_com_google_android_inputmethod_latin_corner_round_metric_title">Change button corner rounds to this size</string>
     <string name="xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary">3 is recommended</string>
     <string name="xsettings_com_google_android_inputmethod_latin_title">GBoard settings</string>
+    <string name="xsettings_general_apply_changes_title">Force apply changes</string>
+    <string name="xsettings_general_apply_changes_summary">This will restart the target app</string>
+    <string name="preload_deisabled_hooks_title">Preload disabled hooks</string>
+    <string name="xsettings_com_auxbrain_egginc_prevent_load_ads_title">Prevent ad frameworks loading</string>
+    <string name="xsettings_com_auxbrain_egginc_prevent_load_ads_summary">Use it if the game hangs for minutes while starting</string>
 </resources>

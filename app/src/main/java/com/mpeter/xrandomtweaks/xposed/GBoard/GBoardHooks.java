@@ -38,7 +38,7 @@ public class GBoardHooks extends HookedApp {
     private void initRoundCorner(){
         if (ROUND_CORNER == 0f){
             if (XposedModule.getResources() != null) {
-                ROUND_CORNER = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, ROUND_CORNER_DIP, XposedModule.getResources().getDisplayMetrics());
+                ROUND_CORNER = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, customRoundCornerDip, XposedModule.getResources().getDisplayMetrics());
             } else XposedBridge.log(LOG_TAG + "modres nem elérhető");
         }
     }
@@ -47,6 +47,8 @@ public class GBoardHooks extends HookedApp {
         XposedHelpers.findAndHookMethod("android.graphics.Canvas", loadPackageParam.classLoader, "drawRoundRect", float.class, float.class, float.class, float.class, float.class, float.class, Paint.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!hooksEnabled || !useCustomRoundCorner) return;
+
                 initRoundCorner();
 
                 param.args[4] = ROUND_CORNER;
@@ -57,10 +59,33 @@ public class GBoardHooks extends HookedApp {
         XposedHelpers.findAndHookMethod("android.graphics.Canvas", loadPackageParam.classLoader, "drawRoundRect", RectF.class, float.class, float.class, Paint.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!hooksEnabled || !useCustomRoundCorner) return;
+
                 initRoundCorner();
 
                 param.args[1] = ROUND_CORNER;
                 param.args[2] = ROUND_CORNER;
+            }
+        });
+    }
+
+    private void hookDebugHooks(XC_LoadPackage.LoadPackageParam loadPackageParam){
+        Class SoftKeyViewClazz = null;
+
+        try {
+            SoftKeyViewClazz = Class.forName("com.google.android.apps.inputmethod.libs.framework.keyboard.SoftKeyView");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        XposedBridge.hookAllConstructors(SoftKeyViewClazz, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                String log = "constructor hooked:\n";
+                for (int i = 0; i < param.args.length; i++) {
+                    log += param.args[i];
+                    log += "\n";
+                }
             }
         });
     }

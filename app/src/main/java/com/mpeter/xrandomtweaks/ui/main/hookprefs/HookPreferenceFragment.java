@@ -1,11 +1,11 @@
-package com.mpeter.xrandomtweaks.ui;
+package com.mpeter.xrandomtweaks.ui.main.hookprefs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.PreferenceCategory;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.annotation.Nullable;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.TypedValue;
@@ -14,23 +14,35 @@ import android.view.ContextThemeWrapper;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
 import com.mpeter.xrandomtweaks.R;
+import com.mpeter.xrandomtweaks.ui.IntNumberEditTextPreference;
+import com.mpeter.xrandomtweaks.ui.LongNumberEditTextPreference;
+import com.mpeter.xrandomtweaks.xposed.SpecialEventReceiver;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
+import com.mpeter.xrandomtweaks.xposed.XposedModule;
+import com.takisoft.fix.support.v7.preference.PreferenceCategory;
+import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
-public class HookPreferenceFragment extends PreferenceFragmentCompat{
+public class HookPreferenceFragment extends PreferenceFragmentCompat {
     public static final String EXTRA_PACKAGE_NAME = "package_name";
+    public static final String LOG_TAG = XposedModule.getLogtag(HookPreferenceFragment.class);
+
+    public static HookPreferenceFragment getInstance(){
+        return new HookPreferenceFragment();
+    }
 
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
         Bundle bundle = getArguments();
-        if (bundle == null) throw new IllegalArgumentException("preference fragment cannot be opened without arguments");
+        if (bundle == null)
+            throw new IllegalArgumentException("preference fragment cannot be opened without arguments");
 
         final SupportedPackages.Package pkg = SupportedPackages.Package.forString(bundle.getString(EXTRA_PACKAGE_NAME));
 
-        Context context = getActivity();
+        Context context = getContext();
 
         PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(context);
         setPreferenceScreen(preferenceScreen);
-        getPreferenceManager().setSharedPreferencesName(App.ENABLED_PACKAGES_PREF_FILE);
+        getPreferenceManager().setSharedPreferencesName(App.XSETTINGS_PREF_FILE);
 
         TypedValue tValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.preferenceTheme, tValue, true);
@@ -39,9 +51,14 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
         PreferenceCategory preferenceCategory = new PreferenceCategory(contextThemeWrapper);
         preferenceScreen.addPreference(preferenceCategory);
 
+        Preference applyChanges = new Preference(contextThemeWrapper);
+        applyChanges.setTitle(getString(R.string.xsettings_general_apply_changes_title));
+        applyChanges.setSummary(getString(R.string.xsettings_general_apply_changes_summary));
+
         Resources r = getResources();
 
-        switch (pkg){
+        assert pkg != null;
+        switch (pkg) {
             case PACKAGE_SELF:
                 break;
             case PACKAGE_MIUI_HOME:
@@ -50,8 +67,15 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 layoutHeightFix.setSummary(getString(R.string.xsettings_com_miui_home_fix_layout_height_sumary));
                 layoutHeightFix.setKey(getString(R.string.miuihome_fix_heightgap));
                 layoutHeightFix.setDefaultValue(r.getBoolean(R.bool.miuihome_fix_heightgap_def));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_MIUI_HOME);
+                    return true;
+                });
+
                 preferenceCategory.addPreference(layoutHeightFix);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_miui_home_title));
+
                 break;
             case PACKAGE_FB_MESSENGER:
                 SwitchPreferenceCompat cheatSoccer = new SwitchPreferenceCompat(contextThemeWrapper);
@@ -59,10 +83,15 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 cheatSoccer.setKey(getString(R.string.messenger_cheat_soccer));
                 cheatSoccer.setDefaultValue(r.getBoolean(R.bool.messenger_cheat_soccer_def));
 
-                EditTextPreference cheatedScore = new EditTextPreference(contextThemeWrapper); //TODO: csak számok
+                IntNumberEditTextPreference cheatedScore = new IntNumberEditTextPreference(contextThemeWrapper);
                 cheatedScore.setTitle(getString(R.string.xsettings_com_facebook_orca_custom_score_title));
                 cheatedScore.setKey(getString(R.string.messenger_soccer_score));
                 cheatedScore.setDefaultValue(String.valueOf(r.getInteger(R.integer.messenger_soccer_score_def)));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_FB_MESSENGER);
+                    return true;
+                });
 
                 preferenceCategory.addPreference(cheatSoccer);
                 preferenceCategory.addPreference(cheatedScore);
@@ -75,10 +104,22 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 preventMusic.setKey(getString(R.string.egginc_prevent_music));
                 preventMusic.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_music_def));
 
+                SwitchPreferenceCompat preventLoadAds = new SwitchPreferenceCompat(contextThemeWrapper);
+                preventLoadAds.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_prevent_load_ads_title));
+                preventLoadAds.setSummary(getString(R.string.xsettings_com_auxbrain_egginc_prevent_load_ads_summary));
+                preventLoadAds.setKey(r.getString(R.string.egginc_prevent_load_ads));
+                preventLoadAds.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_load_ads_def));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_EGGINC);
+                    return true;
+                });
+
                 preferenceCategory.addPreference(preventMusic);
+                preferenceCategory.addPreference(preventLoadAds);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_title));
 
-                if (BuildConfig.DEBUG){
+                if (BuildConfig.DEBUG) {
                     SwitchPreferenceCompat skipAds = new SwitchPreferenceCompat(contextThemeWrapper);
                     skipAds.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_skip_ads_title));
                     skipAds.setKey(getString(R.string.egginc_skip_ads));
@@ -100,6 +141,11 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 restartOnLongpress.setKey(getString(R.string.aimp_restart_on_longpress));
                 restartOnLongpress.setDefaultValue(r.getBoolean(R.bool.aimp_restart_on_longpress_def));
 
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_AIMP);
+                    return true;
+                });
+
                 preferenceCategory.addPreference(replaceAlbumart);
                 preferenceCategory.addPreference(restartOnLongpress);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_aimp_player_title));
@@ -108,17 +154,34 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat{
                 SwitchPreferenceCompat oldCornerRounds = new SwitchPreferenceCompat(contextThemeWrapper);
                 oldCornerRounds.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_old_corner_rounds_title));
                 oldCornerRounds.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_old_corner_rounds_summary));
+                oldCornerRounds.setKey(r.getString(R.string.gboard_use_custom_round_corner));
+                oldCornerRounds.setDefaultValue(r.getBoolean(R.bool.gboard_use_custom_round_corner_def));
 
-                EditTextPreference cornerRoundMetric = new EditTextPreference(contextThemeWrapper); //TODO: csak számok
-                cornerRoundMetric.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));
-                cornerRoundMetric.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary));
-                cornerRoundMetric.setKey(getString(R.string.gboard_custom_round_corner_dip));
-                cornerRoundMetric.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
+                LongNumberEditTextPreference cornerRoundSize = new LongNumberEditTextPreference(contextThemeWrapper);
+                cornerRoundSize.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_title));
+                cornerRoundSize.setSummary(getString(R.string.xsettings_com_google_android_inputmethod_latin_corner_round_metric_summary));
+                cornerRoundSize.setKey(getString(R.string.gboard_custom_round_corner_dip));
+                cornerRoundSize.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
+
+                applyChanges.setOnPreferenceClickListener(preference -> {
+                    applyChanges(context, SupportedPackages.Package.PACKAGE_GBOARD);
+                    return true;
+                });
 
                 preferenceCategory.addPreference(oldCornerRounds);
-                preferenceCategory.addPreference(cornerRoundMetric);
+                preferenceCategory.addPreference(cornerRoundSize);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_title));
                 break;
         }
+
+        preferenceCategory.addPreference(applyChanges);
+    }
+
+    private static void applyChanges(Context context, SupportedPackages.Package pkg){
+        Intent intent = new Intent();
+        intent.setAction(SpecialEventReceiver.ACTION_EXIT_APP);
+        intent.setPackage(pkg.getPackageName());
+
+        context.sendBroadcast(intent);
     }
 }

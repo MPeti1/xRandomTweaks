@@ -1,6 +1,8 @@
 package com.mpeter.xrandomtweaks.xposed;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.XModuleResources;
 
@@ -8,6 +10,9 @@ import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
 
+import java.io.File;
+
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -38,14 +43,17 @@ public class XposedModule {
         Timber.tag(LOG_TAG).d("initializing in %s", loadPackageParam.packageName);
 
         setSharedPrefs(new XSharedPreferences(PACKAGE));
-        setResources(XModuleResources.createInstance(mModulePath, null));
+        setResources(mModulePath);
         setupXSettings(loadPackageParam);
+        setupBroadcastReceiver(loadPackageParam);
 
         initialized = true;
+        Timber.tag(LOG_TAG).d("initialization complete");
     }
 
     public static void setModulePath(String modulePath) {
         mModulePath = modulePath;
+        Timber.tag(LOG_TAG).i("Module path is %s", modulePath);
     }
 
     public static String getModulePath() {
@@ -70,6 +78,15 @@ public class XposedModule {
         mResources = resources;
     }
 
+    public static void setResources(String modulePath) {
+        File moduleAPK = new File(modulePath);
+        if (!moduleAPK.exists()){
+            modulePath = refreshModulePath(modulePath);
+        }
+        Timber.tag(LOG_TAG).d("Final modulePath is %s", modulePath);
+        setResources(XModuleResources.createInstance(modulePath, null));
+    }
+
     public static boolean needsResources() {
         return isTempRes;
     }
@@ -85,33 +102,6 @@ public class XposedModule {
     }
 
     private static void setupXSettings(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        /*if (mEnabledPackages != null) Timber.tag(LOG_TAG).w("sharedPrefs has been already set");
-        else if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
-        else mEnabledPackages = sharedPrefs;*/
-
-       /* XposedHelpers.findAndHookMethod("android.app.ActivityThread", loadPackageParam.classLoader, "handleBindApplication", "android.app.ActivityThread.AppBindData", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                *//*Application application = (Application) XposedHelpers.callMethod(
-                        XposedHelpers.getObjectField(param.args[0], "info"),
-                        "makeApplication",
-                        false,
-                        null
-                );
-
-                XposedHelpers.callMethod(
-                        param.thisObject,
-                        "installContentProviders",
-                        application,
-                        XposedHelpers.getObjectField(param.args[0], "providers");
-                );*//*
-
-                new ModuleSettings();
-            }
-        });*/
-
         systemContext = (Context) XposedHelpers.callMethod(
                 XposedHelpers.callStaticMethod(
                         XposedHelpers.findClass("android.app.ActivityThread", loadPackageParam.classLoader),
@@ -119,9 +109,22 @@ public class XposedModule {
                 "getSystemContext"
         );
 
-        mXSettings = new RemotePreferences(systemContext, ModuleSettingsProvider.AUTHORITY, App.ENABLED_PACKAGES_PREF_FILE);
+        mXSettings = new RemotePreferences(systemContext, ModuleSettingsProvider.AUTHORITY, App.XSETTINGS_PREF_FILE);
 
         new ModuleSettings();
+    }
+
+    private static void setupBroadcastReceiver(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod(Application.class.getCanonicalName(), loadPackageParam.classLoader, "onCreate", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                SpecialEventReceiver specialEventReceiver = new SpecialEventReceiver();
+                IntentFilter filter = new IntentFilter(SpecialEventReceiver.ACTION_EXIT_APP);
+
+                Context context = (Context) param.thisObject;
+                context.registerReceiver(specialEventReceiver, filter);
+            }
+        });
     }
 
     public static XSharedPreferences getSharedPrefs() {
@@ -134,5 +137,35 @@ public class XposedModule {
 
     public static boolean isModuleEnabled() {
         return false;
+    }
+
+    public static String refreshModulePath(String oldPath){
+        Timber.tag(LOG_TAG).d("refreshModulePath called");
+
+        File moduleAPK = new File(oldPath);
+        String[] split = moduleAPK.getAbsolutePath().split("/");
+        StringBuilder filePath = new StringBuilder();
+        for (int i = 4; i < split.length; i++) {
+            filePath.append("/");
+            filePath.append(split[i]);
+        }
+
+        File moduleFolder = moduleAPK.getParentFile();
+        String moduleFolderPath = moduleFolder.getAbsolutePath();
+        String baseFolderPath = moduleFolderPath.substring(0, moduleFolderPath.lastIndexOf("-"));
+
+        int counter = 1;
+        while (!(moduleFolder = new File(moduleFolderPath)).exists()){
+            moduleFolderPath = baseFolderPath + "-" + counter;
+            Timber.tag(LOG_TAG).d("Searching module folder: %s", moduleFolderPath);
+
+            if (counter >= 50)
+                Timber.tag(LOG_TAG).wtf("Couldn't find module folder");
+
+            counter++;
+        }
+
+        Timber.tag(LOG_TAG).d("Found module folder at %s", moduleFolderPath);
+        return moduleFolderPath + filePath;
     }
 }
