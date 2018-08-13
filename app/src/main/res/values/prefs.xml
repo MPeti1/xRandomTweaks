@@ -18,6 +18,8 @@
     <bool name="egginc_prevent_music_def">false</bool>
     <string name="egginc_skip_ads">com.auxbrain.egginc_skip_ads</string>
     <bool name="egginc_skip_ads_def">false</bool>
+    <string name="egginc_prevent_load_ads">com.auxbrain.egginc_prevent_load_ads</string>
+    <bool name="egginc_prevent_load_ads_def">false</bool>
 
     <string name="gboard_hooks_enabled">com.google.android.inputmethod.latin_hooks_enabled</string>
     <bool name="gboard_hooks_enabled_def">false</bool>

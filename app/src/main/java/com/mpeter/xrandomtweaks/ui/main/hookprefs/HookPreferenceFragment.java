@@ -104,12 +104,19 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 preventMusic.setKey(getString(R.string.egginc_prevent_music));
                 preventMusic.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_music_def));
 
+                SwitchPreferenceCompat preventLoadAds = new SwitchPreferenceCompat(contextThemeWrapper);
+                preventLoadAds.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_prevent_load_ads_title));
+                preventLoadAds.setSummary(getString(R.string.xsettings_com_auxbrain_egginc_prevent_load_ads_summary));
+                preventLoadAds.setKey(r.getString(R.string.egginc_prevent_load_ads));
+                preventLoadAds.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_load_ads_def));
+
                 applyChanges.setOnPreferenceClickListener(preference -> {
                     applyChanges(context, SupportedPackages.Package.PACKAGE_EGGINC);
                     return true;
                 });
 
                 preferenceCategory.addPreference(preventMusic);
+                preferenceCategory.addPreference(preventLoadAds);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_title));
 
                 if (BuildConfig.DEBUG) {

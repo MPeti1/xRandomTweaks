@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
             switch (TAG){
                 case FRAGMENT_HOME:
                     fragmentArrayMap.put(TAG, HomeFragment.getInstance());
-
                     break;
 
                 case FRAGMENT_HOOKSETTINGS:

@@ -31,6 +31,7 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
         EggIncHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.egginc_hooks_enabled), false));
         EggIncHooks.setPreventMusic(sharedPrefs.getBoolean(r.getString(R.string.egginc_prevent_music), false));
         EggIncHooks.setSkipAds(sharedPrefs.getBoolean(r.getString(R.string.egginc_skip_ads), false));
+        EggIncHooks.setPreventAdLoad(sharedPrefs.getBoolean(r.getString(R.string.egginc_prevent_load_ads), false));
 
         GBoardHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
         GBoardHooks.setUseCustomRoundCorner(sharedPrefs.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));

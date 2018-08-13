@@ -32,4 +32,6 @@
     <string name="xsettings_general_apply_changes_title">Force apply changes</string>
     <string name="xsettings_general_apply_changes_summary">This will restart the target app</string>
     <string name="preload_deisabled_hooks_title">Preload disabled hooks</string>
+    <string name="xsettings_com_auxbrain_egginc_prevent_load_ads_title">Prevent ad frameworks loading</string>
+    <string name="xsettings_com_auxbrain_egginc_prevent_load_ads_summary">Use it if the game hangs for minutes while starting</string>
 </resources>
