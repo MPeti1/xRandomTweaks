@@ -9,6 +9,8 @@ import android.content.res.XModuleResources;
 import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
+import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.ModuleSettingsProvider;
+import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.SpecialEventReceiver;
 
 import java.io.File;
 

@@ -1,8 +1,9 @@
-package com.mpeter.xrandomtweaks.xposed;
+package com.mpeter.xrandomtweaks.xposed.xRandomTweaks;
 
 import com.crossbowffs.remotepreferences.RemotePreferenceProvider;
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.BuildConfig;
+import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
 import timber.log.Timber;
 

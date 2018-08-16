@@ -5,7 +5,8 @@
     android:id="@+id/tweak_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    app:cardBackgroundColor="?itemcardBackgroundColor">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -24,6 +25,8 @@
 
         <TextView
             android:id="@+id/package_name"
+            android:textSize="14sp"
+            android:textColor="?textColorSecondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"

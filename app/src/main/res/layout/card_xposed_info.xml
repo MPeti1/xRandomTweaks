@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        app:cardBackgroundColor="?cardBackgroundColor"
         app:cardUseCompatPadding="true"
         tools:showIn="@layout/fragment_home">
 
@@ -58,11 +59,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/enable_module"
+                android:theme="@style/DefButtonStyle"
                 android:visibility="visible"
                 app:layout_constraintEnd_toStartOf="@+id/textview_xposed_version"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/textview_xposed_version_label"
-                app:layout_constraintTop_toBottomOf="@+id/textview_preload_hooks_title" />
+                app:layout_constraintTop_toBottomOf="@+id/radiogroup_themeselector" />
 
             <TextView
                 android:id="@+id/textview_xposed_version_label"
@@ -92,6 +94,45 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textview_module_state" />
+
+            <TextView
+                android:id="@+id/textview_themeselector_title"
+                style="@style/DefTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:text="Theme"
+                app:layout_constraintBottom_toBottomOf="@+id/radiogroup_themeselector"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textview_preload_hooks_title" />
+
+            <RadioGroup
+                android:id="@+id/radiogroup_themeselector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switch_preload_disabled_hooks">
+
+                <RadioButton
+                    android:id="@+id/radiobutton_themeselector_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="?textColorSecondary"
+                    android:text="Light"
+                    android:textColor="?textColorPrimary" />
+
+                <RadioButton
+                    android:id="@+id/radiobutton_themeselector_dark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="?textColorSecondary"
+                    android:text="Dark"
+                    android:textAppearance="@style/DefTextStyle"
+                    android:textColor="?textColorPrimary" />
+
+            </RadioGroup>
 
 
         </android.support.constraint.ConstraintLayout>

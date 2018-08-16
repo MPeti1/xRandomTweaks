@@ -1,8 +1,10 @@
-package com.mpeter.xrandomtweaks.xposed;
+package com.mpeter.xrandomtweaks.xposed.xRandomTweaks;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
 import timber.log.Timber;
 
