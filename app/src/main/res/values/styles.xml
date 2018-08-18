@@ -15,6 +15,7 @@
 
         <item name="cardBackgroundColor">@color/cardBackgroundColorLight</item>
         <item name="itemcardBackgroundColor">@color/itemcardbackgroundColorLight</item>
+        <item name="android:colorEdgeEffect">?cardBackgroundColor</item>
 
         <item name="buttonNormalColor">@color/material_grey300</item>
 
@@ -31,6 +32,7 @@
 
         <item name="cardBackgroundColor">@color/cardBackgroundColorDark</item>
         <item name="itemcardBackgroundColor">@color/itemcardbackgroundColorDark</item>
+        <item name="android:colorEdgeEffect">?cardBackgroundColor</item>
 
         <item name="buttonNormalColor">@color/material_grey700</item>
 
