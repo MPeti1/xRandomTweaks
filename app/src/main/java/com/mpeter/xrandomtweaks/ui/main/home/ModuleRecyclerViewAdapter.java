@@ -17,10 +17,8 @@ import android.widget.TextView;
 
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
-import com.mpeter.xrandomtweaks.utils.picasso.PackageIconRequestHandler;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -30,7 +28,6 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
     public static final String LOG_TAG = XposedModule.getLogtag(ModuleRecyclerViewAdapter.class);
     private OnRecyclerViewItemClickListener mListener;
     private ArrayList<ApplicationInfo> mApps;
-    private Picasso mPicasso;
     private Context mContext;
     private SharedPreferences mXSettings;
     private final MutableLiveData<Integer> enabledAppsCounter = new MutableLiveData<>();
@@ -48,10 +45,6 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         mXSettings = context.getSharedPreferences(App.XSETTINGS_PREF_FILE, Context.MODE_PRIVATE);
         mContext = context;
 
-        Picasso.Builder builder = new Picasso.Builder(context);
-        builder.addRequestHandler(new PackageIconRequestHandler(context));
-
-        mPicasso = builder.build();
         enabledAppsCounter.setValue(0);
     }
 
@@ -68,10 +61,8 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
         holder.icon.setImageDrawable(null);
         holder.appName.setText(mContext.getPackageManager().getApplicationLabel(applicationInfo));
         holder.packageName.setText(applicationInfo.packageName);
-
+        holder.icon.setImageDrawable(applicationInfo.loadIcon(mContext.getPackageManager()));
         holder.itemView.setTag(applicationInfo.packageName);
-
-        mPicasso.load(PackageIconRequestHandler.getUri(applicationInfo.packageName)).into(holder.icon);
 
         Resources r = mContext.getResources();
 
@@ -99,7 +90,6 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
             default:
                 Timber.tag(LOG_TAG).e("Invalid Package: getPackageName: %s, toString: %s, name: %s", pkg.getPackageName(), pkg.toString(), pkg.name());
         }
-
 
         boolean enabled = mXSettings.getBoolean(prefString, false);
         holder.toggle.setChecked(enabled);
@@ -147,7 +137,7 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
             Resources r = mContext.getResources();
 
             assert pkg != null;
-            switch (pkg){
+            switch (pkg) {
                 case PACKAGE_MIUI_HOME:
                     editor.putBoolean(r.getString(R.string.miuihome_hooks_enabled), isChecked);
                     break;

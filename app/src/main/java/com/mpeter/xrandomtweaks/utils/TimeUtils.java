@@ -7,7 +7,7 @@ public class TimeUtils {
         String nano = String.valueOf(duration.getNano());
         nano = nano.substring(0, nano.length() < 2 ? nano.length() : 2);
 
-        String pre = componentName + "took ";
+        String pre = componentName + " took ";
         String hours = "";
         String minutes = "";
         String seconds = "";
