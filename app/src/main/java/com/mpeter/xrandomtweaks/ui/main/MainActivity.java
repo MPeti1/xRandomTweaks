@@ -13,6 +13,7 @@ import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.SnackbarAction;
 import com.mpeter.xrandomtweaks.ui.main.home.HomeFragment;
 import com.mpeter.xrandomtweaks.ui.main.hookprefs.HookPreferenceFragment;
+import com.mpeter.xrandomtweaks.utils.ResourceUtils;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
 import java.util.Objects;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements Screen, HomeFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ResourceUtils.setupTheme(this);
         setContentView(R.layout.activity_main);
 
         snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "", 0);

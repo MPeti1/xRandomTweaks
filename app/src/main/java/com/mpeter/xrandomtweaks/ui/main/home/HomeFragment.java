@@ -8,7 +8,9 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -18,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -41,6 +44,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     TextView xposedVersion;
     Button enableModule;
     Switch preloadDisabledHooks;
+    RadioGroup themeRadioGroup;
 
     //Tweaks CardView
     RecyclerView recyclerView;
@@ -50,7 +54,9 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     LinearLayoutManager layoutManager;
 
     SharedPreferences xSettings;
+    SharedPreferences sharedPrefs;
     Resources r;
+    Snackbar snackbar;
 
     private OnFragmentInteractionListener mListener;
 
@@ -77,6 +83,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         super.onCreate(savedInstanceState);
 
         xSettings = getContext().getSharedPreferences(App.XSETTINGS_PREF_FILE, Context.MODE_PRIVATE);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         r = getResources();
     }
 
@@ -90,6 +97,9 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         enableModule = view.findViewById(R.id.button_enable_module);
         preloadDisabledHooks = view.findViewById(R.id.switch_preload_disabled_hooks);
         tweakCount = view.findViewById(R.id.textview_tweak_count);
+        themeRadioGroup = view.findViewById(R.id.radiogroup_themeselector);
+
+        snackbar = Snackbar.make(view.findViewById(R.id.mainCoordinatorLayout), "", 0);
 
         recyclerView = view.findViewById(R.id.modules_recyclerview);
 
@@ -121,6 +131,37 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
                 .putBoolean(r.getString(R.string.preload_disabled_hooks), enabled1)
                 .apply()
         );
+
+        String themeName = sharedPrefs.getString(r.getString(R.string.app_theme_key), r.getString(R.string.app_theme_light));
+        if (themeName.equals(r.getString(R.string.app_theme_light)))
+            themeRadioGroup.check(R.id.radiobutton_themeselector_light);
+        else if (themeName.equals(r.getString(R.string.app_theme_dark)))
+            themeRadioGroup.check(R.id.radiobutton_themeselector_dark);
+        else Timber.tag(LOG_TAG).wtf("invalid theme name: %s", themeName);
+
+        themeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                switch (i){
+                    case R.id.radiobutton_themeselector_light:
+                        sharedPrefs.edit()
+                                .putString(r.getString(R.string.app_theme_key), r.getString(R.string.app_theme_light))
+                                .apply();
+                        displaySnackbarThemeChanged();
+                        break;
+
+                    case R.id.radiobutton_themeselector_dark:
+                        sharedPrefs.edit()
+                                .putString(r.getString(R.string.app_theme_key), r.getString(R.string.app_theme_dark))
+                                .apply();
+                        displaySnackbarThemeChanged();
+                        break;
+
+                    default:
+                        Timber.tag(LOG_TAG).wtf("unknown radiobutton id: %d", i);
+                }
+            }
+        });
 
         setupRecyclerView();
         setupTweakCount();
@@ -180,5 +221,12 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
 
             tweakCount.setText(getString(R.string.tweak_count, enabledTweaksCount, allTweaksCount));
         });
+    }
+
+    private void displaySnackbarThemeChanged(){
+        snackbar.setText("Theme changed, apply changes?");
+        snackbar.setAction("Yes", view -> getActivity().recreate());
+        snackbar.setDuration(Snackbar.LENGTH_INDEFINITE);
+        snackbar.show();
     }
 }

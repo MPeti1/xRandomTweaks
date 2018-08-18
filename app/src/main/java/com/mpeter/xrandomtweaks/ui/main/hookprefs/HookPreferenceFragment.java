@@ -16,7 +16,7 @@ import com.mpeter.xrandomtweaks.BuildConfig;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.ui.IntNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.ui.LongNumberEditTextPreference;
-import com.mpeter.xrandomtweaks.xposed.SpecialEventReceiver;
+import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.SpecialEventReceiver;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;

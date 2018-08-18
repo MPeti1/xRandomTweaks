@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom Preference Theme -->
+    <style name="DarkPreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="android:textColorPrimary">?textColorPrimary</item>
+        <item name="android:textColorSecondary">?textColorSecondary</item>
+        <item name="android:textColorTertiary">?textColorTertiary</item>
+    </style>
+</resources>

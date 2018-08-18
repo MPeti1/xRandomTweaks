@@ -3,5 +3,18 @@
     <color name="colorPrimary">#43A047</color>
     <color name="colorPrimaryDark">#087f23</color>
     <color name="colorAccent">#ff5722</color>
+
     <color name="tweak_disabled">#EEEEEE</color>
+
+    <color name="textColorPrimaryDark">@android:color/background_light</color>
+    <color name="textColorSecondaryDark">#bebebe</color> <!--@android:color/dim_foreground_dark-->
+    <color name="textColorTertiaryDark">#808080</color>
+
+    <color name="windowBackgroundLight">#F4F4F6</color>
+    <color name="windowBackgroundDark">#424242</color>
+
+    <color name="cardBackgroundColorLight">@android:color/white</color>
+    <color name="cardBackgroundColorDark">#494949</color>
+    <color name="itemcardbackgroundColorLight">@android:color/white</color>
+    <color name="itemcardbackgroundColorDark">#505050</color>
 </resources>

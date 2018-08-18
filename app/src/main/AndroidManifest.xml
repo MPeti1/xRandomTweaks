@@ -19,7 +19,7 @@
         </activity>
 
         <provider
-            android:name=".xposed.ModuleSettingsProvider"
+            android:name=".xposed.xRandomTweaks.ModuleSettingsProvider"
             android:authorities="com.mpeter.xrandomtweaks.settings"
             android:exported="true" />
 

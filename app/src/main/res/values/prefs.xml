@@ -39,4 +39,10 @@
     <bool name="miuihome_hooks_enabled_def">false</bool>
     <string name="miuihome_fix_heightgap">com.miui.home_fix_heightgap</string>
     <bool name="miuihome_fix_heightgap_def">false</bool>
+
+    <!--Default pref file-->
+
+    <string name="app_theme_key">app_theme</string>
+    <string name="app_theme_light">light</string>
+    <string name="app_theme_dark">dark</string>
 </resources>

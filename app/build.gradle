@@ -45,8 +45,6 @@ dependencies {
     compileOnly 'de.robv.android.xposed:api:82:sources'
     //material colors
     implementation 'com.github.mcginty:material-colors:1.1.0'
-    //Picasso
-    implementation 'com.squareup.picasso:picasso:2.71828'
     //ThreeTenABP
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.0'
     //PreferenceScreen
