@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.transition.Fade;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
@@ -64,7 +65,19 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     }
 
     public static HomeFragment getInstance() {
-        return new HomeFragment();
+        HomeFragment homeFragment = new HomeFragment();
+
+        Fade enterAnim = new Fade();
+        enterAnim.setStartDelay(300);
+        enterAnim.setDuration(300);
+
+        Fade exitAnim = new Fade();
+        exitAnim.setDuration(300);
+
+        homeFragment.setEnterTransition(enterAnim);
+        homeFragment.setExitTransition(exitAnim);
+
+        return homeFragment;
     }
 
     @Override

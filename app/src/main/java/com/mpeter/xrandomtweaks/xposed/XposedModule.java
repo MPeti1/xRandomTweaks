@@ -31,7 +31,6 @@ public class XposedModule {
 
     private static boolean initialized = false;
     private static boolean isTempRes = true;
-    private static final boolean earlyDebug = true;
 
     public static String getLogtag(Class clazz) {
         return PACKAGE.substring(PACKAGE.lastIndexOf("."), PACKAGE.length()) + "/" + clazz.getSimpleName() + " ";
@@ -46,7 +45,7 @@ public class XposedModule {
 
         setSharedPrefs(new XSharedPreferences(PACKAGE));
         setResources(mModulePath);
-        setupXSettings(loadPackageParam);
+        setupXSettingsTemporary(loadPackageParam);
         setupBroadcastReceiver(loadPackageParam);
 
         initialized = true;
@@ -103,7 +102,8 @@ public class XposedModule {
         else mSharedPrefs = sharedPrefs;
     }
 
-    private static void setupXSettings(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+
+    private static void setupXSettingsTemporary(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         systemContext = (Context) XposedHelpers.callMethod(
                 XposedHelpers.callStaticMethod(
                         XposedHelpers.findClass("android.app.ActivityThread", loadPackageParam.classLoader),
@@ -113,7 +113,13 @@ public class XposedModule {
 
         mXSettings = new RemotePreferences(systemContext, ModuleSettingsProvider.AUTHORITY, App.XSETTINGS_PREF_FILE);
 
-        new ModuleSettings();
+        ModuleSettings.getInstance();
+    }
+
+    public static void setupXSettings(){
+        Context applicationContext = CurrentApp.getApplicationContext();
+        mXSettings = new RemotePreferences(applicationContext, ModuleSettingsProvider.AUTHORITY, App.XSETTINGS_PREF_FILE);
+        ModuleSettings.getInstance().registerXSettingsChangeListener();
     }
 
     private static void setupBroadcastReceiver(XC_LoadPackage.LoadPackageParam loadPackageParam) {

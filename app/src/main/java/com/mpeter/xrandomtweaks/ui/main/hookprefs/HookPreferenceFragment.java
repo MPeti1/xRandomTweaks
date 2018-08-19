@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.transition.Fade;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.preference.SwitchPreferenceCompat;
@@ -16,9 +17,9 @@ import com.mpeter.xrandomtweaks.BuildConfig;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.ui.IntNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.ui.LongNumberEditTextPreference;
-import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.SpecialEventReceiver;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
+import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.SpecialEventReceiver;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
@@ -27,7 +28,19 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
     public static final String LOG_TAG = XposedModule.getLogtag(HookPreferenceFragment.class);
 
     public static HookPreferenceFragment getInstance(){
-        return new HookPreferenceFragment();
+        HookPreferenceFragment hookPreferenceFragment = new HookPreferenceFragment();
+
+        Fade enterAnim = new Fade();
+        enterAnim.setStartDelay(300);
+        enterAnim.setDuration(300);
+
+        Fade exitAnim = new Fade();
+        exitAnim.setDuration(300);
+
+        hookPreferenceFragment.setEnterTransition(enterAnim);
+        hookPreferenceFragment.setExitTransition(exitAnim);
+
+        return hookPreferenceFragment;
     }
 
     @Override

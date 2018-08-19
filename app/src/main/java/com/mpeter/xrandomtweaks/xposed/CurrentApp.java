@@ -1,9 +1,13 @@
 package com.mpeter.xrandomtweaks.xposed;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.XResources;
 
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import timber.log.Timber;
@@ -16,6 +20,7 @@ public class CurrentApp {
     private static ApplicationInfo mAppInfo;
     private static XSharedPreferences mSharedPrefs;
     private static XResources mResources;
+    private static Context applicationContext;
 
     private static boolean initialized = false;
 
@@ -27,6 +32,7 @@ public class CurrentApp {
         setPackageName(loadPackageParam.packageName);
         setAppInfo(loadPackageParam.appInfo);
         setSharedPrefs(new XSharedPreferences(loadPackageParam.packageName));
+        hookApplicationStateChanges(loadPackageParam);
 
         initialized = true;
     }
@@ -90,5 +96,23 @@ public class CurrentApp {
     private static void setSharedPrefs(XSharedPreferences sharedPrefs) {
         if (sharedPrefs == null) Timber.tag(LOG_TAG).e("sharedPrefs is null");
         else mSharedPrefs = sharedPrefs;
+    }
+
+    private static void hookApplicationStateChanges(XC_LoadPackage.LoadPackageParam loadPackageParam){
+        XposedHelpers.findAndHookMethod(Application.class.getCanonicalName(), loadPackageParam.classLoader, "onCreate", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Timber.tag(LOG_TAG).d("Obtaining applicationContext");
+                applicationContext = (Context) param.thisObject;
+
+                XposedModule.setupXSettings();
+            }
+        });
+
+        Timber.tag(LOG_TAG).d("Application.onCreate() hooked for applicationContext");
+    }
+
+    public static Context getApplicationContext() {
+        return applicationContext;
     }
 }

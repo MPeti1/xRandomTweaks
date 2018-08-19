@@ -14,43 +14,58 @@ import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
 import timber.log.Timber;
 
 public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static boolean preloadDisabledHooks;
-
     public static final String LOG_TAG = XposedModule.getLogtag(ModuleSettings.class);
+    private static ModuleSettings statik;
 
-    public ModuleSettings() {
-        SharedPreferences sharedPrefs = XposedModule.getXSettings();
+    private boolean preloadDisabledHooks;
+    private SharedPreferences xSettings;
+
+    private ModuleSettings() {
+        xSettings = XposedModule.getXSettings();
         XModuleResources r = XposedModule.getResources();
 
-        setPreloadDisabledHooks(sharedPrefs.getBoolean(r.getString(R.string.preload_disabled_hooks), false));
+        setPreloadDisabledHooks(xSettings.getBoolean(r.getString(R.string.preload_disabled_hooks), false));
 
-        AIMPHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.aimp_hooks_enabled), false));
-        AIMPHooks.setReplaceAlbumArt(sharedPrefs.getBoolean(r.getString(R.string.aimp_replace_albumart), false));
-        AIMPHooks.setRestartOnLongpause(sharedPrefs.getBoolean(r.getString(R.string.aimp_restart_on_longpress), false));
+        AIMPHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.aimp_hooks_enabled), false));
+        AIMPHooks.setReplaceAlbumArt(xSettings.getBoolean(r.getString(R.string.aimp_replace_albumart), false));
+        AIMPHooks.setRestartOnLongpause(xSettings.getBoolean(r.getString(R.string.aimp_restart_on_longpress), false));
 
-        EggIncHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.egginc_hooks_enabled), false));
-        EggIncHooks.setPreventMusic(sharedPrefs.getBoolean(r.getString(R.string.egginc_prevent_music), false));
-        EggIncHooks.setSkipAds(sharedPrefs.getBoolean(r.getString(R.string.egginc_skip_ads), false));
-        EggIncHooks.setPreventAdLoad(sharedPrefs.getBoolean(r.getString(R.string.egginc_prevent_load_ads), false));
+        EggIncHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.egginc_hooks_enabled), false));
+        EggIncHooks.setPreventMusic(xSettings.getBoolean(r.getString(R.string.egginc_prevent_music), false));
+        EggIncHooks.setSkipAds(xSettings.getBoolean(r.getString(R.string.egginc_skip_ads), false));
+        EggIncHooks.setPreventAdLoad(xSettings.getBoolean(r.getString(R.string.egginc_prevent_load_ads), false));
 
-        GBoardHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
-        GBoardHooks.setUseCustomRoundCorner(sharedPrefs.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
-        GBoardHooks.setCustomRoundCornerDip(sharedPrefs.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
+        GBoardHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
+        GBoardHooks.setUseCustomRoundCorner(xSettings.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
+        GBoardHooks.setCustomRoundCornerDip(xSettings.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
 
-        MessengerHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
-        MessengerHooks.setCheatInSoccer(sharedPrefs.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
-        MessengerHooks.setSoccerScoreToCheat(Integer.valueOf(sharedPrefs.getString(r.getString(R.string.messenger_soccer_score), String.valueOf(0))));
+        MessengerHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
+        MessengerHooks.setCheatInSoccer(xSettings.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
+        MessengerHooks.setSoccerScoreToCheat(Integer.valueOf(xSettings.getString(r.getString(R.string.messenger_soccer_score), String.valueOf(0))));
 
-        MiuiHomeHooks.setHooksEnabled(sharedPrefs.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false));
-        MiuiHomeHooks.setFixHeightGap(sharedPrefs.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));
+        MiuiHomeHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false));
+        MiuiHomeHooks.setFixHeightGap(xSettings.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));
+    }
+
+    public static ModuleSettings getInstance() {
+        if (statik == null)
+            statik = new ModuleSettings();
+
+        return statik;
+    }
+
+    public void registerXSettingsChangeListener() {
+        Timber.tag(LOG_TAG).d("Registering change listener");
+        xSettings = XposedModule.getXSettings();
+        xSettings.registerOnSharedPreferenceChangeListener(this);
     }
 
     public static boolean preloadDisabledHooks() {
-        return preloadDisabledHooks;
+        return statik.preloadDisabledHooks;
     }
 
-    private static void setPreloadDisabledHooks(boolean preloadDisabledHooks) {
-        ModuleSettings.preloadDisabledHooks = preloadDisabledHooks;
+    private void setPreloadDisabledHooks(boolean preloadDisabledHooks) {
+        this.preloadDisabledHooks = preloadDisabledHooks;
     }
 
     @Override
@@ -59,8 +74,10 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(packageName);
         Resources r = XposedModule.getResources();
 
+        Timber.tag(LOG_TAG).d("Shared preference change received in package %s, changed key is %s", packageName, key);
+
         assert pkg != null;
-        switch (pkg){
+        switch (pkg) {
             case PACKAGE_MIUI_HOME:
                 if (key.equals(r.getString(R.string.miuihome_hooks_enabled)))
                     MiuiHomeHooks.setHooksEnabled(sharedPreferences.getBoolean(key, false));
