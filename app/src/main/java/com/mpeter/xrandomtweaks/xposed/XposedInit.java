@@ -18,6 +18,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackageResources, IXposedHookZygoteInit {
     public static final String LOG_TAG = XposedModule.getLogtag(XposedInit.class);
+    public static XC_LoadPackage.LoadPackageParam firstLpparam;
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
@@ -29,6 +30,8 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(lpparam.packageName);
 
         if (pkg == null) return;
+
+        firstLpparam = lpparam;
 
         Forester.forestate();
 

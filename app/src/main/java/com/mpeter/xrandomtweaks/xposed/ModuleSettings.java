@@ -26,25 +26,41 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
 
         setPreloadDisabledHooks(xSettings.getBoolean(r.getString(R.string.preload_disabled_hooks), false));
 
-        AIMPHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.aimp_hooks_enabled), false));
-        AIMPHooks.setReplaceAlbumArt(xSettings.getBoolean(r.getString(R.string.aimp_replace_albumart), false));
-        AIMPHooks.setRestartOnLongpause(xSettings.getBoolean(r.getString(R.string.aimp_restart_on_longpress), false));
+        SupportedPackages.Package pkg = SupportedPackages.Package.forString(XposedInit.firstLpparam.packageName);
 
-        EggIncHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.egginc_hooks_enabled), false));
-        EggIncHooks.setPreventMusic(xSettings.getBoolean(r.getString(R.string.egginc_prevent_music), false));
-        EggIncHooks.setSkipAds(xSettings.getBoolean(r.getString(R.string.egginc_skip_ads), false));
-        EggIncHooks.setPreventAdLoad(xSettings.getBoolean(r.getString(R.string.egginc_prevent_load_ads), false));
+        switch (pkg) {
+            case PACKAGE_SELF:
+                break;
+            case PACKAGE_MIUI_HOME:
+                MiuiHomeHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false));
+                MiuiHomeHooks.setFixHeightGap(xSettings.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));
+                break;
+            case PACKAGE_FB_MESSENGER:
+                MessengerHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
+                MessengerHooks.setCheatInSoccer(xSettings.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
+                MessengerHooks.setSoccerScoreToCheat(Integer.valueOf(xSettings.getString(r.getString(R.string.messenger_soccer_score), String.valueOf(0))));
+                break;
+            case PACKAGE_EGGINC:
+                EggIncHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.egginc_hooks_enabled), false));
+                EggIncHooks.setPreventMusic(xSettings.getBoolean(r.getString(R.string.egginc_prevent_music), false));
+                EggIncHooks.setSkipAds(xSettings.getBoolean(r.getString(R.string.egginc_skip_ads), false));
+                EggIncHooks.setPreventAdLoad(xSettings.getBoolean(r.getString(R.string.egginc_prevent_load_ads), false));
+                break;
+            case PACKAGE_AIMP:
+                AIMPHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.aimp_hooks_enabled), false));
+                AIMPHooks.setReplaceAlbumArt(xSettings.getBoolean(r.getString(R.string.aimp_replace_albumart), false));
+                AIMPHooks.setRestartOnLongpause(xSettings.getBoolean(r.getString(R.string.aimp_restart_on_longpress), false));
+                break;
+            case PACKAGE_GBOARD:
+                GBoardHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
+                GBoardHooks.setUseCustomRoundCorner(xSettings.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
+                GBoardHooks.setCustomRoundCornerDip(xSettings.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
+                break;
 
-        GBoardHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.gboard_hooks_enabled), false));
-        GBoardHooks.setUseCustomRoundCorner(xSettings.getBoolean(r.getString(R.string.gboard_use_custom_round_corner), false));
-        GBoardHooks.setCustomRoundCornerDip(xSettings.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
-
-        MessengerHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.messenger_hooks_enabled), false));
-        MessengerHooks.setCheatInSoccer(xSettings.getBoolean(r.getString(R.string.messenger_cheat_soccer), false));
-        MessengerHooks.setSoccerScoreToCheat(Integer.valueOf(xSettings.getString(r.getString(R.string.messenger_soccer_score), String.valueOf(0))));
-
-        MiuiHomeHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.miuihome_hooks_enabled), false));
-        MiuiHomeHooks.setFixHeightGap(xSettings.getBoolean(r.getString(R.string.miuihome_fix_heightgap), false));
+            default:
+                Timber.tag(LOG_TAG).e("No such app: %s", pkg.getPackageName());
+                break;
+        }
     }
 
     public static ModuleSettings getInstance() {

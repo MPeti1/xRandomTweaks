@@ -143,6 +143,10 @@ public class XposedModule {
         return mXSettings;
     }
 
+    public static Context getSystemContext() {
+        return systemContext;
+    }
+
     public static boolean isModuleEnabled() {
         return false;
     }
