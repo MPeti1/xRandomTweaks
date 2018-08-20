@@ -58,7 +58,7 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
                 break;
 
             default:
-                Timber.tag(LOG_TAG).e("No such app: %s", pkg.getPackageName());
+                Timber.tag(LOG_TAG).wtf("No such app: %s", pkg.getPackageName());
                 break;
         }
     }
@@ -139,7 +139,7 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
                 break;
 
             default:
-                Timber.tag(LOG_TAG).e("No such app: %s", pkg.getPackageName());
+                Timber.tag(LOG_TAG).wtf("No such app: %s", pkg.getPackageName());
                 break;
         }
     }

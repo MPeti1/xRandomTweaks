@@ -15,4 +15,9 @@ public class ModuleSettingsProvider extends RemotePreferenceProvider {
         super(AUTHORITY, new String[]{App.XSETTINGS_PREF_FILE});
         Timber.tag(LOG_TAG).d("initialized");
     }
+
+    @Override
+    protected boolean checkAccess(String prefName, String prefKey, boolean write) {
+        return false;
+    }
 }

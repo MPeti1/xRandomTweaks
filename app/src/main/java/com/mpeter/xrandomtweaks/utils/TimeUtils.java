@@ -15,7 +15,7 @@ public class TimeUtils {
 
         if (duration.toHours() == 0){
             if (duration.toMinutes() == 0){
-                seconds = duration.getSeconds() + "." + nano + "seconds";
+                seconds = duration.getSeconds() + "." + nano + " seconds";
             } else minutes = duration.toMinutes() + " minutes and ";
         } else hours = duration.toHours() + ", ";
 

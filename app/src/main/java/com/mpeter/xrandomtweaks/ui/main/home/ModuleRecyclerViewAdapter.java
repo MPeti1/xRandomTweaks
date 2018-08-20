@@ -154,7 +154,7 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
                     editor.putBoolean(r.getString(R.string.gboard_hooks_enabled), isChecked);
                     break;
                 default:
-                    Timber.tag(LOG_TAG).e("Invalid Package: getPackageName: %s, toString: %s, name: %s", pkg.getPackageName(), pkg.toString(), pkg.name());
+                    Timber.tag(LOG_TAG).e("Invalid Package: %s", pkg.getPackageName());
                     break;
             }
 
