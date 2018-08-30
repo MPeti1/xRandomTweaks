@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            storeFile file('C:/Users/masap/AndroidStudioProjects/android-keystore.jks')
+            storePassword 'a16431879196842'
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.mpeter.xrandomtweaks"

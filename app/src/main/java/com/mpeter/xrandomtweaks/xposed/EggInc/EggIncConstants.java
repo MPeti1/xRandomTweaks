@@ -9,6 +9,9 @@ public class EggIncConstants {
     public static final String METHOD_playUnityVideoAd = "playUnityVideoAd";
     public static final String METHOD_videoAdViewComplete = "videoAdViewComplete";
     public static final String METHOD_initAdPlatforms = "initAdPlatforms";
+    public static final String METHOD_isVideoAdAvailable = "isVideoAdAvailable";
+    public static final String FIELD_ADS_INITED = "ADS_INITED";
+    public static final String FIELD_CB_INITED = "CB_INITED";
 
     public static final String CLASS_InterstitialAdState = "com.vungle.publisher.env.k";
     public static final String METHOD_showAd = "a";
