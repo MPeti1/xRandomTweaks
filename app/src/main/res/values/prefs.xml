@@ -40,6 +40,11 @@
     <string name="miuihome_fix_heightgap">com.miui.home_fix_heightgap</string>
     <bool name="miuihome_fix_heightgap_def">false</bool>
 
+    <string name="flashfire_hooks_enabled">eu.chainfire.flash_hooks_enabled</string>
+    <bool name="flashfire_hooks_enabled_def">false</bool>
+    <string name="flashfire_hook_proreal">eu.chainfire.flash_hook_proreal</string>
+    <bool name="flashfire_hook_proreal_def">false</bool>
+
     <!--Default pref file-->
 
     <string name="app_theme_key">app_theme</string>

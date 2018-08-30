@@ -82,7 +82,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 layoutHeightFix.setDefaultValue(r.getBoolean(R.bool.miuihome_fix_heightgap_def));
 
                 applyChanges.setOnPreferenceClickListener(preference -> {
-                    applyChanges(context, SupportedPackages.Package.PACKAGE_MIUI_HOME);
+                    sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_MIUI_HOME, SpecialEventReceiver.ACTION_EXIT_APP);
                     return true;
                 });
 
@@ -102,7 +102,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 cheatedScore.setDefaultValue(String.valueOf(r.getInteger(R.integer.messenger_soccer_score_def)));
 
                 applyChanges.setOnPreferenceClickListener(preference -> {
-                    applyChanges(context, SupportedPackages.Package.PACKAGE_FB_MESSENGER);
+                    sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_FB_MESSENGER, SpecialEventReceiver.ACTION_EXIT_APP);
                     return true;
                 });
 
@@ -123,8 +123,19 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 preventLoadAds.setKey(r.getString(R.string.egginc_prevent_load_ads));
                 preventLoadAds.setDefaultValue(r.getBoolean(R.bool.egginc_prevent_load_ads_def));
 
+                Preference switchToAR = new Preference(contextThemeWrapper);
+                switchToAR.setTitle("Try to switch to AR mode");
+                switchToAR.setSummary("Maybe not working");
+                switchToAR.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_EGGINC, SpecialEventReceiver.ACTION_EGGINC_START_AR);
+                        return true;
+                    }
+                });
+
                 applyChanges.setOnPreferenceClickListener(preference -> {
-                    applyChanges(context, SupportedPackages.Package.PACKAGE_EGGINC);
+                    sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_EGGINC, SpecialEventReceiver.ACTION_EXIT_APP);
                     return true;
                 });
 
@@ -155,7 +166,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 restartOnLongpress.setDefaultValue(r.getBoolean(R.bool.aimp_restart_on_longpress_def));
 
                 applyChanges.setOnPreferenceClickListener(preference -> {
-                    applyChanges(context, SupportedPackages.Package.PACKAGE_AIMP);
+                    sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_AIMP, SpecialEventReceiver.ACTION_EXIT_APP);
                     return true;
                 });
 
@@ -177,7 +188,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 cornerRoundSize.setDefaultValue(String.valueOf(r.getInteger(R.integer.gboard_custom_round_corner_dip_def)));
 
                 applyChanges.setOnPreferenceClickListener(preference -> {
-                    applyChanges(context, SupportedPackages.Package.PACKAGE_GBOARD);
+                    sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_GBOARD, SpecialEventReceiver.ACTION_EXIT_APP);
                     return true;
                 });
 
@@ -185,14 +196,25 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 preferenceCategory.addPreference(cornerRoundSize);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_google_android_inputmethod_latin_title));
                 break;
+
+            case PACKAGE_FLASHFIRE:
+                SwitchPreferenceCompat hookProReal = new SwitchPreferenceCompat(contextThemeWrapper);
+                hookProReal.setTitle("Am I a real Pro?");
+                hookProReal.setSummary("Yes, trust me ;)");
+                hookProReal.setKey(r.getString(R.string.flashfire_hook_proreal));
+                hookProReal.setDefaultValue(r.getBoolean(R.bool.flashfire_hook_proreal_def));
+
+                preferenceCategory.addPreference(hookProReal);
+                preferenceCategory.setTitle("FlashFire");
+                break;
         }
 
         preferenceCategory.addPreference(applyChanges);
     }
 
-    private static void applyChanges(Context context, SupportedPackages.Package pkg){
+    private static void sendBroadcastToHooks(Context context, SupportedPackages.Package pkg, String action){
         Intent intent = new Intent();
-        intent.setAction(SpecialEventReceiver.ACTION_EXIT_APP);
+        intent.setAction(action);
         intent.setPackage(pkg.getPackageName());
 
         context.sendBroadcast(intent);

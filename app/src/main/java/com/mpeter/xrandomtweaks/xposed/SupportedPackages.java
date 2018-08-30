@@ -11,7 +11,8 @@ public class SupportedPackages {
         PACKAGE_FB_MESSENGER("com.facebook.orca"),
         PACKAGE_EGGINC("com.auxbrain.egginc"),
         PACKAGE_AIMP("com.aimp.player"),
-        PACKAGE_GBOARD("com.google.android.inputmethod.latin");
+        PACKAGE_GBOARD("com.google.android.inputmethod.latin"),
+        PACKAGE_FLASHFIRE("eu.chainfire.flash");
 
         private final String packageName;
 

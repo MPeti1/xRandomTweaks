@@ -7,6 +7,7 @@ import android.content.res.XModuleResources;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.xposed.AIMP.AIMPHooks;
 import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncHooks;
+import com.mpeter.xrandomtweaks.xposed.FlashFire.FlashFireHooks;
 import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
 import com.mpeter.xrandomtweaks.xposed.Messenger.MessengerHooks;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
@@ -57,6 +58,11 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
                 GBoardHooks.setCustomRoundCornerDip(xSettings.getFloat(r.getString(R.string.gboard_custom_round_corner_dip), GBoardHooks.ROUND_CORNER_DIP));
                 break;
 
+            case PACKAGE_FLASHFIRE:
+                FlashFireHooks.setEnableHooks(xSettings.getBoolean(r.getString(R.string.flashfire_hooks_enabled), false));
+                FlashFireHooks.setHookProReal(xSettings.getBoolean(r.getString(R.string.flashfire_hook_proreal), false));
+                break;
+
             default:
                 Timber.tag(LOG_TAG).wtf("No such app: %s", pkg.getPackageName());
                 break;
@@ -92,7 +98,8 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
 
         Timber.tag(LOG_TAG).d("Shared preference change received in package %s, changed key is %s", packageName, key);
 
-        assert pkg != null;
+        if (pkg == null && packageName.equals("preload"))
+            setPreloadDisabledHooks(sharedPreferences.getBoolean(key, false));
         switch (pkg) {
             case PACKAGE_MIUI_HOME:
                 if (key.equals(r.getString(R.string.miuihome_hooks_enabled)))
@@ -135,6 +142,13 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
                     GBoardHooks.setUseCustomRoundCorner(sharedPreferences.getBoolean(key, false));
                 else if (key.equals(r.getString(R.string.gboard_custom_round_corner_dip)))
                     GBoardHooks.setCustomRoundCornerDip(sharedPreferences.getFloat(key, GBoardHooks.ROUND_CORNER_DIP));
+                else Timber.tag(LOG_TAG).e("No such setting: %s", key);
+                break;
+            case PACKAGE_FLASHFIRE:
+                if (key.equals(r.getString(R.string.flashfire_hooks_enabled)))
+                    FlashFireHooks.setEnableHooks(sharedPreferences.getBoolean(key, false));
+                else if (key.equals(r.getString(R.string.flashfire_hook_proreal)))
+                    FlashFireHooks.setHookProReal(sharedPreferences.getBoolean(key, false));
                 else Timber.tag(LOG_TAG).e("No such setting: %s", key);
                 break;
 

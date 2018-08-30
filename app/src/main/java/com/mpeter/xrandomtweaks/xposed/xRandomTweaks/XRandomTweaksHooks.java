@@ -1,6 +1,10 @@
 package com.mpeter.xrandomtweaks.xposed.xRandomTweaks;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageItemInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Binder;
 
 import com.mpeter.xrandomtweaks.App;
@@ -17,6 +21,7 @@ import java.util.Objects;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import timber.log.Timber;
@@ -86,6 +91,52 @@ public class XRandomTweaksHooks extends HookedApp {
                 return permit;
             }
         });
+
+        XposedHelpers.findAndHookMethod("android.app.ApplicationPackageManager", loadPackageParam.classLoader, "getResourcesForApplication", ApplicationInfo.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Resources r = (Resources) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("android.app.ApplicationPackageManager", loadPackageParam.classLoader, "putCachedIcon", "android.app.ApplicationPackageManager.ResourceName", Drawable.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.args[1];
+                super.beforeHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("android.app.ApplicationPackageManager", loadPackageParam.classLoader, "getDrawable", String.class, int.class, ApplicationInfo.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedBridge.hookMethod(
+                XposedHelpers.findMethodBestMatch(
+                        XposedHelpers.findClass(
+                                "android.app.MiuiThemeHelper",
+                                loadPackageParam.classLoader),
+                        "getDrawable"),
+                new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        Drawable drawable = (Drawable) param.getResult();
+                        super.afterHookedMethod(param);
+                    }
+                });
+
+        XposedHelpers.findAndHookMethod(PackageItemInfo.class.getCanonicalName(), loadPackageParam.classLoader, "loadIcon", PackageManager.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
     }
 
     private static boolean checkAccessExclusive(String[] packagesForCallingUid, String prefName, String prefKey) {
@@ -103,31 +154,38 @@ public class XRandomTweaksHooks extends HookedApp {
             case PACKAGE_MIUI_HOME:
                 permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
                 permittedKeys = new int[]{
-                        R.string.preload_disabled_hooks,
+                        R.string.preload_disabled_hooks
                 };
                 break;
             case PACKAGE_FB_MESSENGER:
                 permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
                 permittedKeys = new int[]{
-                        R.string.preload_disabled_hooks,
+                        R.string.preload_disabled_hooks
                 };
                 break;
             case PACKAGE_EGGINC:
                 permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
                 permittedKeys = new int[]{
-                        R.string.preload_disabled_hooks,
+                        R.string.preload_disabled_hooks
                 };
                 break;
             case PACKAGE_AIMP:
                 permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
                 permittedKeys = new int[]{
-                        R.string.preload_disabled_hooks,
+                        R.string.preload_disabled_hooks
                 };
                 break;
             case PACKAGE_GBOARD:
                 permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
                 permittedKeys = new int[]{
-                        R.string.preload_disabled_hooks,
+                        R.string.preload_disabled_hooks
+                };
+                break;
+
+            case PACKAGE_FLASHFIRE:
+                permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
+                permittedKeys = new int[]{
+                        R.string.preload_disabled_hooks
                 };
                 break;
 

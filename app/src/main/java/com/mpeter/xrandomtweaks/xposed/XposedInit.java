@@ -5,6 +5,7 @@ import android.content.res.XModuleResources;
 import com.mpeter.xrandomtweaks.foresttools.Forester;
 import com.mpeter.xrandomtweaks.xposed.AIMP.AIMPHooks;
 import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncHooks;
+import com.mpeter.xrandomtweaks.xposed.FlashFire.FlashFireHooks;
 import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
 import com.mpeter.xrandomtweaks.xposed.Messenger.MessengerHooks;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
@@ -57,8 +58,12 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_MIUI_HOME:
                 new MiuiHomeHooks().initHooks(lpparam);
                 break;
+            case PACKAGE_FLASHFIRE:
+                new FlashFireHooks().initHooks(lpparam);
+                break;
+
             default:
-                throw new IllegalStateException(LOG_TAG + "Switch missing a case for a supported package");
+                throw new IllegalStateException(LOG_TAG + "Switch missing a case for a supported package: " + pkg.getPackageName());
         }
     }
 
