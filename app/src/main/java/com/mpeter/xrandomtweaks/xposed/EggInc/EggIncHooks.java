@@ -36,26 +36,6 @@ public class EggIncHooks extends HookedApp {
         super(EggIncHooks.class, SupportedPackages.Package.PACKAGE_EGGINC);
     }
 
-    public static WeakReference<Activity> getEggIncActivity() {
-        return eggIncActivity;
-    }
-
-    public static void setHooksEnabled(boolean hooksEnabled) {
-        EggIncHooks.hooksEnabled = hooksEnabled;
-    }
-
-    public static void setPreventMusic(boolean preventMusic) {
-        EggIncHooks.preventMusic = preventMusic;
-    }
-
-    public static void setSkipAds(boolean skipAds) {
-        EggIncHooks.skipAds = skipAds;
-    }
-
-    public static void setPreventAdLoad(boolean preventAdLoad) {
-        EggIncHooks.preventAdLoad = preventAdLoad;
-    }
-
     @Override
     public void initHooks(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         if (!hooksEnabled && !ModuleSettings.preloadDisabledHooks()) return;
@@ -76,8 +56,11 @@ public class EggIncHooks extends HookedApp {
         XposedHelpers.findAndHookMethod(CLASS_EggIncActivity, loadPackageParam.classLoader, METHOD_playMusic, String.class, boolean.class, float.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                if (hooksEnabled && preventMusic)
+                if (hooksEnabled && preventMusic) {
                     param.setResult(null);
+                }
+
+                eggIncActivity = new WeakReference<Activity>((Activity) param.thisObject);
             }
         });
     }
@@ -151,5 +134,25 @@ public class EggIncHooks extends HookedApp {
         XposedHelpers.callMethod(param.thisObject, METHOD_videoAdViewComplete, true);
         Timber.tag(LOG_TAG).i("Skipped an ad");
         eggIncActivity = new WeakReference<Activity>((Activity) param.thisObject);
+    }
+
+    public static void setHooksEnabled(boolean hooksEnabled) {
+        EggIncHooks.hooksEnabled = hooksEnabled;
+    }
+
+    public static void setPreventMusic(boolean preventMusic) {
+        EggIncHooks.preventMusic = preventMusic;
+    }
+
+    public static void setSkipAds(boolean skipAds) {
+        EggIncHooks.skipAds = skipAds;
+    }
+
+    public static void setPreventAdLoad(boolean preventAdLoad) {
+        EggIncHooks.preventAdLoad = preventAdLoad;
+    }
+
+    public static WeakReference<Activity> getEggIncActivity() {
+        return eggIncActivity;
     }
 }
