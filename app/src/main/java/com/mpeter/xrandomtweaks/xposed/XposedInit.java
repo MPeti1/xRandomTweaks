@@ -7,6 +7,7 @@ import com.mpeter.xrandomtweaks.xposed.AIMP.AIMPHooks;
 import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncHooks;
 import com.mpeter.xrandomtweaks.xposed.FlashFire.FlashFireHooks;
 import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
+import com.mpeter.xrandomtweaks.xposed.Medium.MediumHooks;
 import com.mpeter.xrandomtweaks.xposed.Messenger.MessengerHooks;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
 import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.XRandomTweaksHooks;
@@ -28,6 +29,17 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        /*try {
+            XposedHelpers.findAndHookMethod("com.android.commands.input.Input", lpparam.classLoader, "run", String[].class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    Timber.tag(LOG_TAG).i("Input is running");
+                }
+            });
+        } catch (Exception e){
+            Timber.tag(LOG_TAG).e(e, "Error occurred during hooking Input class");
+        }*/
+
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(lpparam.packageName);
 
         if (pkg == null) return;
@@ -61,6 +73,9 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_FLASHFIRE:
                 new FlashFireHooks().initHooks(lpparam);
                 break;
+            case PACKAGE_MEDIUM:
+                new MediumHooks().initHooks(lpparam);
+                break;
 
             default:
                 throw new IllegalStateException(LOG_TAG + "Switch missing a case for a supported package: " + pkg.getPackageName());
@@ -73,8 +88,10 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
 
         if (pkg == null) return;
 
-        if (XposedModule.needsResources())
+        if (XposedModule.needsResources()){
             XposedModule.setResources(XModuleResources.createInstance(XposedModule.getModulePath(), resparam.res));
+            XposedModule.setBaseResources(resparam.res);
+        }
 
         switch (pkg) {
             case PACKAGE_SELF:
@@ -83,6 +100,8 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_EGGINC:
             case PACKAGE_AIMP:
             case PACKAGE_GBOARD:
+            case PACKAGE_FLASHFIRE:
+            case PACKAGE_MEDIUM:
                 CurrentApp.initResources(resparam);
                 break;
             default:

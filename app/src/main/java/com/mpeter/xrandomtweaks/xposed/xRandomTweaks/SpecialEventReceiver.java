@@ -23,6 +23,11 @@ public class SpecialEventReceiver extends BroadcastReceiver {
     public static final String ACTION_EGGINC_START_AR = "com.mpeter.xrandomtweaks.ACTION_EGGINC_START_AR";
     public static final int AR_DELAY = 5000;
 
+    public static final String[] ACTIONS_ALL = new String[]{
+            ACTION_EXIT_APP,
+            ACTION_EGGINC_START_AR
+    };
+
     public SpecialEventReceiver() {
         super();
 
@@ -50,6 +55,7 @@ public class SpecialEventReceiver extends BroadcastReceiver {
                         EggIncConstants.CLASS_EggIncActivity);
 
                 Intent startEggInc = new Intent().setComponent(eggIncComponent);
+                startEggInc.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 if (startEggInc.resolveActivity(context.getPackageManager()).getClassName().equals(EggIncConstants.CLASS_EggIncActivity)){
                     new Timer().schedule(new StartARMode(), AR_DELAY);
@@ -66,15 +72,21 @@ public class SpecialEventReceiver extends BroadcastReceiver {
     class StartARMode extends TimerTask{
         @Override
         public void run() {
+            Timber.tag(LOG_TAG).d("Running task StartARMode");
+
             XposedHelpers.callMethod(
                     EggIncHooks.getEggIncActivity().get(),
                     "requestInitAR"
             );
 
+            Timber.tag(LOG_TAG).d("Task StartARMode half done");
+
             XposedHelpers.callMethod(
                     EggIncHooks.getEggIncActivity().get(),
                     "requestARSessionStart"
             );
+
+            Timber.tag(LOG_TAG).d("Task StartARMode finished");
         }
     }
 }

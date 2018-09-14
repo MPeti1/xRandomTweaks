@@ -1,9 +1,12 @@
 package com.mpeter.xrandomtweaks.xposed.xRandomTweaks;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageItemInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
 
@@ -17,11 +20,11 @@ import com.mpeter.xrandomtweaks.xposed.XposedModule;
 import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 
+import java.util.List;
 import java.util.Objects;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import timber.log.Timber;
@@ -116,19 +119,127 @@ public class XRandomTweaksHooks extends HookedApp {
             }
         });
 
-        XposedBridge.hookMethod(
-                XposedHelpers.findMethodBestMatch(
-                        XposedHelpers.findClass(
-                                "android.app.MiuiThemeHelper",
-                                loadPackageParam.classLoader),
-                        "getDrawable"),
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        Drawable drawable = (Drawable) param.getResult();
-                        super.afterHookedMethod(param);
-                    }
-                });
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getCustomizedIconFromCache", String.class, String.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                /*PackageManager packageManager = (PackageManager) param.args[0]; //nem működik
+                Drawable drawable = packageManager.getApplicationIcon((String) param.args[1]);*/
+                super.beforeHookedMethod(param);
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getCustomizedIcon", Context.class, String.class, String.class, Drawable.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.args[3];
+                super.beforeHookedMethod(param);
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getCustomizedIconInner", Context.class, List.class, Drawable.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+            }
+
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable ret = (Drawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getDrawableFromMemoryCache", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                BitmapDrawable ret = (BitmapDrawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getDrawableFromStaticCache", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                BitmapDrawable ret = (BitmapDrawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getDrawable", Bitmap.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                BitmapDrawable ret = (BitmapDrawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getIconFromTheme", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Bitmap ret = (Bitmap) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getMiuiModIcon", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Bitmap ret = (Bitmap) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "drawableToBitmap", Drawable.class, float.class, "miui.content.res.IconCustomizer.IconInfo", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Bitmap ret = (Bitmap) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "getScaleRatio", Drawable.class, boolean.class, "miui.content.res.IconCustomizer.IconInfo", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                float ret = (float) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "composeIconWithTransform", Bitmap.class, String.class, String.class, String.class, String.class, boolean.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Bitmap ret = (Bitmap) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("miui.content.res.IconCustomizer", loadPackageParam.classLoader, "saveCustomizedIconBitmap", String.class, Bitmap.class, Context.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Bitmap bitmap = (Bitmap) param.args[1];
+                super.afterHookedMethod(param);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("android.app.MiuiThemeHelper", loadPackageParam.classLoader, "getDrawable", PackageManager.class, String.class, String.class, int.class, ApplicationInfo.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Drawable drawable = (Drawable) param.getResult();
+                super.afterHookedMethod(param);
+            }
+        });
 
         XposedHelpers.findAndHookMethod(PackageItemInfo.class.getCanonicalName(), loadPackageParam.classLoader, "loadIcon", PackageManager.class, new XC_MethodHook() {
             @Override
@@ -189,8 +300,15 @@ public class XRandomTweaksHooks extends HookedApp {
                 };
                 break;
 
+            case PACKAGE_MEDIUM:
+                permittedFiles = new String[]{App.XSETTINGS_PREF_FILE};
+                permittedKeys = new int[]{
+                        R.string.preload_disabled_hooks
+                };
+                break;
+
             default:
-                Timber.tag(LOG_TAG).wtf("No such app: %s", pkg.getPackageName());
+                Timber.tag(LOG_TAG).e("No such app: %s", pkg.getPackageName());
                 break;
         }
 

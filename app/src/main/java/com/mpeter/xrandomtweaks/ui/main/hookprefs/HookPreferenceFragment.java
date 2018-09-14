@@ -1,5 +1,6 @@
 package com.mpeter.xrandomtweaks.ui.main.hookprefs;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -17,11 +18,14 @@ import com.mpeter.xrandomtweaks.BuildConfig;
 import com.mpeter.xrandomtweaks.R;
 import com.mpeter.xrandomtweaks.ui.IntNumberEditTextPreference;
 import com.mpeter.xrandomtweaks.ui.LongNumberEditTextPreference;
+import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncConstants;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.SpecialEventReceiver;
 import com.takisoft.fix.support.v7.preference.PreferenceCategory;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+
+import timber.log.Timber;
 
 public class HookPreferenceFragment extends PreferenceFragmentCompat {
     public static final String EXTRA_PACKAGE_NAME = "package_name";
@@ -126,12 +130,19 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 Preference switchToAR = new Preference(contextThemeWrapper);
                 switchToAR.setTitle("Try to switch to AR mode");
                 switchToAR.setSummary("Maybe not working");
-                switchToAR.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_EGGINC, SpecialEventReceiver.ACTION_EGGINC_START_AR);
-                        return true;
-                    }
+                switchToAR.setOnPreferenceClickListener(preference -> {
+                    sendBroadcastToHooks(context, SupportedPackages.Package.PACKAGE_EGGINC, SpecialEventReceiver.ACTION_EGGINC_START_AR);
+
+                    ComponentName eggIncComponent = new ComponentName(
+                            SupportedPackages.Package.PACKAGE_EGGINC.getPackageName(),
+                            EggIncConstants.CLASS_EggIncActivity);
+
+                    Intent startEggInc = new Intent().setComponent(eggIncComponent);
+
+                    if (startEggInc.resolveActivity(context.getPackageManager()).getClassName().equals(EggIncConstants.CLASS_EggIncActivity))
+                        context.startActivity(startEggInc);
+                    else Timber.tag(LOG_TAG).e("EggIncActivity can't be resolved with ComponentName %s", eggIncComponent.toString());
+                    return true;
                 });
 
                 applyChanges.setOnPreferenceClickListener(preference -> {
@@ -141,6 +152,7 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
 
                 preferenceCategory.addPreference(preventMusic);
                 preferenceCategory.addPreference(preventLoadAds);
+//                preferenceCategory.addPreference(switchToAR);
                 preferenceCategory.setTitle(getString(R.string.xsettings_com_auxbrain_egginc_title));
 
                 if (BuildConfig.DEBUG) {
@@ -206,6 +218,23 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
 
                 preferenceCategory.addPreference(hookProReal);
                 preferenceCategory.setTitle("FlashFire");
+                break;
+
+            case PACKAGE_MEDIUM:
+                SwitchPreferenceCompat hookMaxUnlockCount = new SwitchPreferenceCompat(contextThemeWrapper);
+                hookMaxUnlockCount.setTitle("I read a lot!");
+                hookMaxUnlockCount.setTitle("Then you can read even more!");
+                hookMaxUnlockCount.setKey(r.getString(R.string.medium_you_read_a_lot));
+                hookMaxUnlockCount.setDefaultValue(r.getBoolean(R.bool.medium_you_read_a_lot_def));
+
+                IntNumberEditTextPreference maxUnlockCount = new IntNumberEditTextPreference(contextThemeWrapper);
+                maxUnlockCount.setTitle("Max unlock count");
+                maxUnlockCount.setKey(r.getString(R.string.medium_unlocks_remaining));
+                maxUnlockCount.setDefaultValue(r.getInteger(R.integer.medium_unlocks_remaining_def));
+
+                preferenceCategory.addPreference(hookMaxUnlockCount);
+                preferenceCategory.addPreference(maxUnlockCount);
+                preferenceCategory.setTitle("Medium");
                 break;
         }
 

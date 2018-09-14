@@ -71,6 +71,8 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
 
         assert pkg != null;
         switch (pkg) {
+            case PACKAGE_SELF:
+                break;
             case PACKAGE_MIUI_HOME:
                 prefString = r.getString(R.string.miuihome_hooks_enabled);
                 break;
@@ -88,6 +90,9 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
                 break;
             case PACKAGE_FLASHFIRE:
                 prefString = r.getString(R.string.flashfire_hooks_enabled);
+                break;
+            case PACKAGE_MEDIUM:
+                prefString = r.getString(R.string.medium_hooks_enabled);
                 break;
 
             default:
@@ -158,6 +163,9 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
                     break;
                 case PACKAGE_FLASHFIRE:
                     editor.putBoolean(r.getString(R.string.flashfire_hooks_enabled), isChecked);
+                    break;
+                case PACKAGE_MEDIUM:
+                    editor.putBoolean(r.getString(R.string.medium_hooks_enabled), isChecked);
                     break;
 
                 default:

@@ -12,7 +12,8 @@ public class SupportedPackages {
         PACKAGE_EGGINC("com.auxbrain.egginc"),
         PACKAGE_AIMP("com.aimp.player"),
         PACKAGE_GBOARD("com.google.android.inputmethod.latin"),
-        PACKAGE_FLASHFIRE("eu.chainfire.flash");
+        PACKAGE_FLASHFIRE("eu.chainfire.flash"),
+        PACKAGE_MEDIUM("com.medium.reader");
 
         private final String packageName;
 
