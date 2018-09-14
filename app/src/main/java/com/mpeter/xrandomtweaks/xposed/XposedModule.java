@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.XModuleResources;
+import android.content.res.XResources;
 
 import com.crossbowffs.remotepreferences.RemotePreferences;
 import com.mpeter.xrandomtweaks.App;
@@ -28,6 +29,7 @@ public class XposedModule {
     private static XSharedPreferences mSharedPrefs;
     private static SharedPreferences mXSettings;
     private static Context systemContext;
+    private static XResources baseResources;
 
     private static boolean initialized = false;
     private static boolean isTempRes = true;
@@ -127,7 +129,10 @@ public class XposedModule {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 SpecialEventReceiver specialEventReceiver = new SpecialEventReceiver();
-                IntentFilter filter = new IntentFilter(SpecialEventReceiver.ACTION_EXIT_APP);
+                IntentFilter filter = new IntentFilter();
+                for (int i = 0; i < SpecialEventReceiver.ACTIONS_ALL.length; i++) {
+                    filter.addAction(SpecialEventReceiver.ACTIONS_ALL[i]);
+                }
 
                 Context context = (Context) param.thisObject;
                 context.registerReceiver(specialEventReceiver, filter);
@@ -178,6 +183,13 @@ public class XposedModule {
         }
 
         Timber.tag(LOG_TAG).d("Found module folder at %s", moduleFolderPath);
+
+        String finalPath = moduleFolderPath + filePath;
+        setResources(XModuleResources.createInstance(finalPath, baseResources));
         return moduleFolderPath + filePath;
+    }
+
+    public static void setBaseResources(XResources baseResources) {
+        XposedModule.baseResources = baseResources;
     }
 }
