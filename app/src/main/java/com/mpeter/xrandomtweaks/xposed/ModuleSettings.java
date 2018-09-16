@@ -101,6 +101,8 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         String packageName = key.substring(0, key.indexOf("_"));
         SupportedPackages.Package pkg = SupportedPackages.Package.forString(packageName);
+        if (!packageName.equals(CurrentApp.getPackageName())) return;
+
         Resources r = XposedModule.getResources();
 
         Timber.tag(LOG_TAG).d("Shared preference change received in package %s, changed key is %s", packageName, key);
