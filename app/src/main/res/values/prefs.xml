@@ -57,4 +57,6 @@
     <string name="app_theme_key">app_theme</string>
     <string name="app_theme_light">light</string>
     <string name="app_theme_dark">dark</string>
+
+    <string name="last_update_time">last_update_time_key</string>
 </resources>

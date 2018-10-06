@@ -5,7 +5,8 @@
     <string name="module_state_enabled">Enabled</string>
     <string name="module_state_disabled">Disabled</string>
     <string name="xposed_version_label">Xposed version</string>
-    <string name="enable_module">Enable module</string>
+    <string name="fixmodule_enable">Enable module and reboot</string>
+    <string name="fixmodule_reboot">Reboot device</string>
     <string name="tweak_item_icon_desc">App\'s icon on launcher</string>
     <string name="tweak_card_label">Tweaks</string>
     <string name="tweak_count">%1$d/%2$d enabled</string>
@@ -34,4 +35,5 @@
     <string name="preload_deisabled_hooks_title">Preload disabled hooks</string>
     <string name="xsettings_com_auxbrain_egginc_prevent_load_ads_title">Prevent ad frameworks loading</string>
     <string name="xsettings_com_auxbrain_egginc_prevent_load_ads_summary">Use it if the game hangs for minutes while starting</string>
+    <string name="module_state_updated">Updated</string>
 </resources>

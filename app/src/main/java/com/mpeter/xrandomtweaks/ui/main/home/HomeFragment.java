@@ -27,7 +27,9 @@ import android.widget.TextView;
 
 import com.mpeter.xrandomtweaks.App;
 import com.mpeter.xrandomtweaks.R;
+import com.mpeter.xrandomtweaks.UpdateReceiver;
 import com.mpeter.xrandomtweaks.ui.main.hookprefs.HookPreferenceFragment;
+import com.mpeter.xrandomtweaks.utils.ToastUtils;
 import com.mpeter.xrandomtweaks.xposed.SupportedPackages;
 import com.mpeter.xrandomtweaks.xposed.XposedModule;
 
@@ -43,7 +45,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
     TextView moduleState;
     TextView xposedVersionLabel;
     TextView xposedVersion;
-    Button enableModule;
+    Button fixModule;
     Switch preloadDisabledHooks;
     RadioGroup themeRadioGroup;
 
@@ -107,7 +109,7 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         moduleState = view.findViewById(R.id.textview_module_state);
         xposedVersionLabel = view.findViewById(R.id.textview_xposed_version_label);
         xposedVersion = view.findViewById(R.id.textview_xposed_version);
-        enableModule = view.findViewById(R.id.button_enable_module);
+        fixModule = view.findViewById(R.id.button_enable_module);
         preloadDisabledHooks = view.findViewById(R.id.switch_preload_disabled_hooks);
         tweakCount = view.findViewById(R.id.textview_tweak_count);
         themeRadioGroup = view.findViewById(R.id.radiogroup_themeselector);
@@ -121,18 +123,25 @@ public class HomeFragment extends Fragment implements ModuleRecyclerViewAdapter.
         if (enabled){
             moduleState.setText(R.string.module_state_enabled);
             moduleState.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_green500));
-            enableModule.setVisibility(View.GONE);
+            fixModule.setVisibility(View.GONE);
+        } else if (UpdateReceiver.isUpdatedSinceBoot()){
+            moduleState.setText(R.string.module_state_updated);
+            moduleState.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_yellow500));
+            fixModule.setText(r.getString(R.string.fixmodule_reboot));
+
+            fixModule.setOnClickListener(view1 -> ToastUtils.makeToast(getContext(), "Reboot action needed", 200));
         } else {
             moduleState.setText(R.string.module_state_disabled);
             moduleState.setTextColor(ContextCompat.getColor(getActivity(), R.color.material_red500));
-        }
+            fixModule.setText(r.getString(R.string.fixmodule_enable));
 
-        enableModule.setOnClickListener(v -> startActivity(
-                new Intent().setComponent(
-                        new ComponentName(
-                                "de.robv.android.xposed.installer",
-                                "de.robv.android.xposed.installer.WelcomeActivity")))
-        );
+            fixModule.setOnClickListener(v -> startActivity(
+                    new Intent().setComponent(
+                            new ComponentName(
+                                    "de.robv.android.xposed.installer",
+                                    "de.robv.android.xposed.installer.WelcomeActivity")))
+            );
+        }
 
         preloadDisabledHooks.setChecked(xSettings.getBoolean(
                 r.getString(R.string.preload_disabled_hooks),

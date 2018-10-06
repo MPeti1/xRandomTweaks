@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/enable_module"
+                tools:text="Enable module and reboot"
                 android:theme="@style/DefButtonStyle"
                 android:visibility="visible"
                 app:layout_constraintEnd_toStartOf="@+id/textview_xposed_version"
