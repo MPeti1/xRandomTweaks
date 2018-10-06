@@ -105,7 +105,7 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
 
         Resources r = XposedModule.getResources();
 
-        Timber.tag(LOG_TAG).d("Shared preference change received in package %s, changed key is %s", packageName, key);
+        Timber.tag(LOG_TAG).d("Shared preference change of %s received, changed key is %s", packageName, key);
 
         if (pkg == null && packageName.equals("preload"))
             setPreloadDisabledHooks(sharedPreferences.getBoolean(key, false));
