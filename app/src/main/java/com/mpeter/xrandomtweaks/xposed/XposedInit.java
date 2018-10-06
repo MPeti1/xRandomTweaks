@@ -7,7 +7,6 @@ import com.mpeter.xrandomtweaks.xposed.AIMP.AIMPHooks;
 import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncHooks;
 import com.mpeter.xrandomtweaks.xposed.FlashFire.FlashFireHooks;
 import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
-import com.mpeter.xrandomtweaks.xposed.Medium.MediumHooks;
 import com.mpeter.xrandomtweaks.xposed.Messenger.MessengerHooks;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
 import com.mpeter.xrandomtweaks.xposed.xRandomTweaks.XRandomTweaksHooks;
@@ -73,9 +72,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_FLASHFIRE:
                 new FlashFireHooks().initHooks(lpparam);
                 break;
-            case PACKAGE_MEDIUM:
-                new MediumHooks().initHooks(lpparam);
-                break;
 
             default:
                 throw new IllegalStateException(LOG_TAG + "Switch missing a case for a supported package: " + pkg.getPackageName());
@@ -101,7 +97,6 @@ public class XposedInit implements IXposedHookLoadPackage, IXposedHookInitPackag
             case PACKAGE_AIMP:
             case PACKAGE_GBOARD:
             case PACKAGE_FLASHFIRE:
-            case PACKAGE_MEDIUM:
                 CurrentApp.initResources(resparam);
                 break;
             default:

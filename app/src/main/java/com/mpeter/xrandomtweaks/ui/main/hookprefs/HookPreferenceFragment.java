@@ -219,23 +219,6 @@ public class HookPreferenceFragment extends PreferenceFragmentCompat {
                 preferenceCategory.addPreference(hookProReal);
                 preferenceCategory.setTitle("FlashFire");
                 break;
-
-            case PACKAGE_MEDIUM:
-                SwitchPreferenceCompat hookMaxUnlockCount = new SwitchPreferenceCompat(contextThemeWrapper);
-                hookMaxUnlockCount.setTitle("I read a lot!");
-                hookMaxUnlockCount.setTitle("Then you can read even more!");
-                hookMaxUnlockCount.setKey(r.getString(R.string.medium_you_read_a_lot));
-                hookMaxUnlockCount.setDefaultValue(r.getBoolean(R.bool.medium_you_read_a_lot_def));
-
-                IntNumberEditTextPreference maxUnlockCount = new IntNumberEditTextPreference(contextThemeWrapper);
-                maxUnlockCount.setTitle("Max unlock count");
-                maxUnlockCount.setKey(r.getString(R.string.medium_unlocks_remaining));
-                maxUnlockCount.setDefaultValue(r.getInteger(R.integer.medium_unlocks_remaining_def));
-
-                preferenceCategory.addPreference(hookMaxUnlockCount);
-                preferenceCategory.addPreference(maxUnlockCount);
-                preferenceCategory.setTitle("Medium");
-                break;
         }
 
         preferenceCategory.addPreference(applyChanges);

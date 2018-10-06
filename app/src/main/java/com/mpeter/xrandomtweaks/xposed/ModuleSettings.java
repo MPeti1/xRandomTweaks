@@ -9,7 +9,6 @@ import com.mpeter.xrandomtweaks.xposed.AIMP.AIMPHooks;
 import com.mpeter.xrandomtweaks.xposed.EggInc.EggIncHooks;
 import com.mpeter.xrandomtweaks.xposed.FlashFire.FlashFireHooks;
 import com.mpeter.xrandomtweaks.xposed.GBoard.GBoardHooks;
-import com.mpeter.xrandomtweaks.xposed.Medium.MediumHooks;
 import com.mpeter.xrandomtweaks.xposed.Messenger.MessengerHooks;
 import com.mpeter.xrandomtweaks.xposed.MiuiHome.MiuiHomeHooks;
 
@@ -62,12 +61,6 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
             case PACKAGE_FLASHFIRE:
                 FlashFireHooks.setEnableHooks(xSettings.getBoolean(r.getString(R.string.flashfire_hooks_enabled), false));
                 FlashFireHooks.setHookProReal(xSettings.getBoolean(r.getString(R.string.flashfire_hook_proreal), false));
-                break;
-
-            case PACKAGE_MEDIUM:
-                MediumHooks.setHooksEnabled(xSettings.getBoolean(r.getString(R.string.medium_hooks_enabled), false));
-                MediumHooks.setYouReadALot(xSettings.getBoolean(r.getString(R.string.medium_you_read_a_lot), false));
-                MediumHooks.setUnlocksRemaining(xSettings.getInt(r.getString(R.string.medium_unlocks_remaining), 0));
                 break;
 
             default:
@@ -158,15 +151,6 @@ public class ModuleSettings implements SharedPreferences.OnSharedPreferenceChang
                     FlashFireHooks.setEnableHooks(sharedPreferences.getBoolean(key, false));
                 else if (key.equals(r.getString(R.string.flashfire_hook_proreal)))
                     FlashFireHooks.setHookProReal(sharedPreferences.getBoolean(key, false));
-                else Timber.tag(LOG_TAG).e("No such setting: %s", key);
-                break;
-            case PACKAGE_MEDIUM:
-                if (key.equals(r.getString(R.string.medium_hooks_enabled)))
-                    MediumHooks.setHooksEnabled(sharedPreferences.getBoolean(key, false));
-                else if (key.equals(r.getString(R.string.medium_you_read_a_lot)))
-                    MediumHooks.setYouReadALot(sharedPreferences.getBoolean(key, false));
-                else if (key.equals(r.getString(R.string.medium_unlocks_remaining)))
-                    MediumHooks.setUnlocksRemaining(sharedPreferences.getInt(key, 0));
                 else Timber.tag(LOG_TAG).e("No such setting: %s", key);
                 break;
 

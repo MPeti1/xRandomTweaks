@@ -91,9 +91,6 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
             case PACKAGE_FLASHFIRE:
                 prefString = r.getString(R.string.flashfire_hooks_enabled);
                 break;
-            case PACKAGE_MEDIUM:
-                prefString = r.getString(R.string.medium_hooks_enabled);
-                break;
 
             default:
                 Timber.tag(LOG_TAG).e("Invalid Package: getPackageName: %s, toString: %s, name: %s", pkg.getPackageName(), pkg.toString(), pkg.name());
@@ -163,9 +160,6 @@ public class ModuleRecyclerViewAdapter extends RecyclerView.Adapter<ModuleRecycl
                     break;
                 case PACKAGE_FLASHFIRE:
                     editor.putBoolean(r.getString(R.string.flashfire_hooks_enabled), isChecked);
-                    break;
-                case PACKAGE_MEDIUM:
-                    editor.putBoolean(r.getString(R.string.medium_hooks_enabled), isChecked);
                     break;
 
                 default:
